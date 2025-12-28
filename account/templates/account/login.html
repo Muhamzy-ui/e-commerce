@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Login — My Jumia{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        <h2>Welcome Back</h2>
+
+        {% if messages %}
+            <div class="form-messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="input-group">
+            <i class="fa fa-user icon"></i>
+            <input type="text" name="username" placeholder="Username" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fa fa-lock icon"></i>
+            <input type="password" name="password" id="password" placeholder="Password" required>
+            <i class="fa fa-eye toggle-password" id="togglePassword"></i>
+        </div>
+
+        <button type="submit">Login</button>
+
+        <p>Don't have an account? 
+            <a href="{% url 'account:register' %}">Sign Up</a>
+        </p>
+    </form>
+</div>
+{% endblock %}

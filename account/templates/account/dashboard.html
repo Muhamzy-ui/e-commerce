@@ -1,0 +1,30 @@
+{% extends "account/dashboard_base.html" %}
+
+{% block dashboard_content %}
+<h5 class="fw-bold mb-3">My Dashboard</h5>
+
+<div class="row g-3">
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Orders</h6>
+            <p>{{ orders_count }}</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Wishlist</h6>
+            <p>{{ wishlist_count }}</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Pending Reviews</h6>
+            <p>{{ pending_reviews_count }}</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

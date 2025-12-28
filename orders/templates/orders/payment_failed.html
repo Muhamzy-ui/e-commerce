@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-5 text-center">
+
+    <div class="card p-4 shadow-lg" style="max-width:420px; margin:auto;">
+        <h2 class="text-danger fw-bold">Payment Failed ❌</h2>
+
+        <p class="text-muted">Your transaction could not be verified.</p>
+
+        <a href="{% url 'orders:checkout' %}" class="btn btn-dark w-100 mt-3">Try Again</a>
+    </div>
+
+</div>
+
+{% endblock %}

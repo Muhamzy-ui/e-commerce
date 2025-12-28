@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+
+<div class="cart-page">
+
+    <h2 style="color: white; margin-bottom: 24px;">Cart ({{ cart_items|length }})</h2>
+
+    <div class="cart-container">
+
+        <!-- LEFT: CART ITEMS -->
+
+            {% for item in cart_items %}
+            <div class="cart-card">
+
+                <div class="cart-img-box">
+                    <a href="{% url 'products:detail' item.product.slug %}">
+                        {% if item.product.main_image %}
+                            <img src="{{ item.product.main_image.url }}" class="cart-img" alt="{{ item.product.name }}">
+                        {% else %}
+                            <img src="https://source.unsplash.com/150x150/?product" class="cart-img" alt="Product">
+                        {% endif %}
+                    </a>
+                </div>
+
+                <!-- PRODUCT INFO -->
+                <div class="cart-details">
+                    <h5 style="font-weight: 600; font-size: 16px; margin: 0 0 8px 0;">{{ item.product.name }}</h5>
+                    <p style="color: #e96a00; font-weight: 700; font-size: 16px; margin: 4px 0;">₦{{ item.price|floatformat:0|intcomma  }}</p>
+
+                    <a href="{% url 'cart:remove_from_cart' item.product.id %}" class="btn-remove">
+                        Remove
+                    </a>
+                </div>
+
+                <!-- QUANTITY BUTTONS -->
+                <div class="cart-qty">
+                    <a href="{% url 'cart:decrease_cart' item.product.id %}" class="qty-btn">−</a>
+                    <span class="qty-number">{{ item.quantity }}</span>
+                    <a href="{% url 'cart:add_to_cart' item.product.id %}" class="qty-btn">+</a>
+                </div>
+
+            </div>
+            {% empty %}
+            <p style="text-align: center; padding: 40px; color: #999;">Your cart is empty.</p>
+            {% endfor %}
+
+        <!-- RIGHT: SUMMARY -->
+        <div class="cart-summary">
+            <h4>Cart Summary</h4>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>₦{{ total_price|floatformat:0|intcomma  }}</span>
+            </div>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'orders:checkout' %}" class="btn-checkout">
+                    Checkout (₦{{ total_price|floatformat:0|intcomma }})
+                </a>
+            {% else %}
+                <a href="{% url 'account:login' %}?next={% url 'orders:checkout' %}"
+                class="btn-checkout">
+                    Login to Checkout
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

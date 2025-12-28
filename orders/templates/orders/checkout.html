@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Checkout — My Jumia{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/payments.css' %}">
+<script src="{% static 'js/payments.js' %}"></script>
+
+<div class="payment-shell">
+  <div class="payment-top">
+    <h2>Checkout</h2>
+    <div class="theme-toggle">
+      <button id="theme-toggle">Toggle theme</button>
+    </div>
+  </div>
+
+  <div class="checkout-grid">
+    <div class="checkout-form">
+      <form method="post" action="{% url 'orders:process_checkout' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-2">
+          {{ form.full_name.label_tag }}<br>
+          {{ form.full_name }}
+        </div>
+        <div class="mb-2">
+          {{ form.email.label_tag }}<br>
+          {{ form.email }}
+        </div>
+        <div class="mb-2">
+          {{ form.phone.label_tag }}<br>
+          {{ form.phone }}
+        </div>
+        <div class="mb-2">
+          {{ form.address.label_tag }}<br>
+          {{ form.address }}
+        </div>
+        <div class="mb-2">
+          {{ form.state.label_tag }}<br>
+          {{ form.state }}
+        </div>
+
+        <h5>Payment method</h5>
+        <div class="mb-3">
+          {{ form.payment_method }}
+        </div>
+
+        <button class="btn btn-primary">Place Order</button>
+      </form>
+    </div>
+
+    <aside class="checkout-summary">
+      <h5>Order Summary</h5>
+      <ul>
+        {% for item in cart %}
+          <li>
+            {{ item.product.name }} × {{ item.quantity }} — ₦{{ item.price|floatformat:0|intcomma }}
+          </li>
+        {% endfor %}
+      </ul>
+      <p><strong>Total: ₦{{ cart_total|floatformat:0|intcomma }}</strong></p>
+    </aside>
+  </div>
+</div>
+
+<script>
+  // small script initialises theme toggle when payments.js loaded
+  document.addEventListener('DOMContentLoaded', function(){ if(typeof initPaymentsTheme === 'function') initPaymentsTheme(); });
+</script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<div class="layout-wrapper">
+        <div class="sidebar p-3 rounded-3 shadow-sm">
+            <h5 class="fw-bold mb-3">Categories</h5>
+            <ul class="list-unstyled category-list mb-4">
+                {% for cat in categories %}
+                    <li>
+                        <a href="{% url 'products:category' cat.slug %}" class="category-link">
+                            {{ cat.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if user.is_authenticated %}
+            <h5 class="fw-bold mb-3">My Account</h5>
+            <ul class="list-unstyled account-list">
+                <li>
+                    <a href="{% url 'wishlist:list' %}" class="account-link">
+                        ❤️ Wishlist
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'orders:list' %}" class="dash-link">
+                        Orders
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'inbox:inbox' %}" class="account-link">
+                        💬 Inbox
+                        {% if unread_messages_count > 0 %}
+                            <span class="badge">{{ unread_messages_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'reviews:pending' %}" class="account-link">
+                        ⭐ Pending Reviews
+                        {% if pending_reviews_count > 0 %}
+                            <span class="badge">{{ pending_reviews_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            </ul>
+            {% else %}
+            <p class="text-muted small">
+                <a href="{% url 'account:login' %}">Login</a> to manage your account    
+            </p>
+            {% endif %}
+
+        </div>
+    <div class="main-content">
+        <h4 class="section-title">Shop by Category</h4>
+        <div class="category-grid">
+            {% for cat in categories %}
+                <a href="{% url 'products:category' cat.slug %}" class="category-link">
+                    <div class="category-card">
+                        {% if cat.image %}
+                            <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <p>{{ cat.name }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+
+        <h4 class="section-title mt-4">Latest Products</h4>
+        <div class="category-grid mt-3" >
+            {% for product in latest_products %}
+                <div class="product-card my-card">
+                    <a href="{% url 'products:detail' product.slug %}">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" class="product-img">
+                        {% else %}
+                            <img src="{% static 'category/phone.png' %}" class="product-img">
+                        {% endif %}
+                    </a>
+                    <div class="card-body text-center">
+                        <p class="product-name">{{ product.name }}</p>
+                        <p class="product-price">₦{{ product.price|floatformat:0|intcomma }}</p>
+                    </div>
+                    <a href="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart">Add to Cart</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h4 class="section-title mt-4">Flash Sales 🔥</h4>
+        <div class="category-grid mt-3" >
+            {% for product in sales_products %}
+                <div class="product-card my-card">
+                    <a href="{% url 'products:detail' product.slug %}">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" class="product-img">
+                        {% endif %}
+                    </a>
+                    <div class="card-body text-center">
+                        <p class="product-name">{{ product.name }}</p>
+                        <p class="product-price">₦{{ product.price |floatformat:0|intcomma }}</p>
+                    </div>
+                    <a href="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart">Add to Cart</a>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

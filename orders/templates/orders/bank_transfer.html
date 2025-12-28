@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="card p-4 shadow-lg" style="max-width:500px; margin:auto;">
+        <h3 class="fw-bold">Bank Transfer</h3>
+        <hr>
+
+        <p><strong>Amount:</strong> ₦{{ amount|floatformat:0|intcomma }}</p>
+        <p><strong>Account Name:</strong> {{ account_name }}</p>
+        <p><strong>Account Number:</strong> {{ account_number }}</p>
+        <p><strong>Bank:</strong> {{ bank_name }}</p>
+        <p><strong>Reference:</strong> {{ order.order_number }}</p>
+
+        <p class="text-muted mt-3">Use your <b>Order Number</b> as the transfer note.</p>
+
+        <a href="{% url 'orders:payment_success' %}?reference={{ order.order_number }}" 
+           class="btn btn-success w-100 mt-3">
+           I Have Paid
+        </a>
+    </div>
+</div>
+
+{% endblock %}

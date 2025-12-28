@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Product{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h3>Add a Product</h3>
+  <form method="post" enctype="multipart/form-data" class="mt-3">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="mb-3">
+      {{ form.category.label_tag }} 
+      {{ form.category }}
+    </div>
+    <div class="mb-3">
+      {{ form.name.label_tag }} 
+      {{ form.name }}
+    </div>
+    <div class="mb-3">
+      {{ form.price.label_tag }} 
+      {{ form.price }}
+    </div>
+    <div class="mb-3">
+      {{ form.description.label_tag }} 
+      {{ form.description }}
+    </div>
+    <div class="mb-3">
+      {{ form.main_image.label_tag }}
+      {{ form.main_image }}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_images">Gallery images (optional)</label>
+      <input type="file" name="images" id="id_images" multiple class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-warning">Save Product</button>
+    <a href="{% url 'vendor:dashboard' %}" class="btn btn-link">Cancel</a>
+  </form>
+</div>
+{% endblock %}

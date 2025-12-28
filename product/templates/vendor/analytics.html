@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-4">Vendor Analytics 📊</h2>
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h6>Total Products</h6>
+                <h3>{{ total_products }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h6>Total Orders</h6>
+                <h3>{{ total_orders }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h6>Total Revenue</h6>
+                <h3>₦{{ total_revenue }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h6>Avg Rating</h6>
+                <h3>{{ avg_rating }} ⭐</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <h4>Top Selling Products</h4>
+    <ul class="list-group">
+        {% for p in top_products %}
+            <li class="list-group-item d-flex justify-content-between">
+                {{ p.product__name }}
+                <span>{{ p.total_sold }} sold</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No sales yet</li>
+        {% endfor %}
+    </ul>
+
+    <p class="mt-4">
+        Orders in last 7 days: <strong>{{ weekly_orders }}</strong>
+    </p>
+</div>
+
+{% endblock %}
