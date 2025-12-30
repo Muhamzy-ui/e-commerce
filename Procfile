@@ -1,1 +1,1 @@
-web: gunicorn My_Jumia.wsgi
+web: gunicorn My_Jumia.wsgi --log-file -
