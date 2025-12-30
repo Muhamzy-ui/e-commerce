@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from decouple import Config, RepositoryEnv
+import dj_database_url
 
 # --------------------------------------------------
 # BASE DIR
@@ -8,18 +9,17 @@ from decouple import Config, RepositoryEnv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --------------------------------------------------
-# FORCE .env LOADING
+# FORCE .env LOADING (for local development)
 # --------------------------------------------------
 config = Config(RepositoryEnv(BASE_DIR / ".env"))
 
 # --------------------------------------------------
 # SECURITY
 # --------------------------------------------------
-SECRET_KEY = config("SECRET_KEY")
-DEBUG = config("DEBUG", cast=bool)
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-default-key")
+DEBUG = config("DEBUG", cast=bool, default=True)
 
-# Allow Render URL
-ALLOWED_HOSTS = ["e-commerce-2-ru9d.onrender.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "e-commerce-2-ru9d.onrender.com"]
 
 # --------------------------------------------------
 # APPLICATIONS
@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     "reviews.apps.ReviewsConfig",
 ]
 
+# --------------------------------------------------
+# MIDDLEWARE
+# --------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -79,15 +82,11 @@ WSGI_APPLICATION = "My_Jumia.wsgi.application"
 # --------------------------------------------------
 # DATABASE
 # --------------------------------------------------
+# Use DATABASE_URL if available (for Render), else fallback to local DB settings
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
-    }
+    "default": dj_database_url.config(
+        default=f"postgres://{config('DB_USER','postgres')}:{config('DB_PASSWORD','password')}@{config('DB_HOST','localhost')}:{config('DB_PORT','5432')}/{config('DB_NAME','ecommerce_db')}"
+    )
 }
 
 # --------------------------------------------------
@@ -109,11 +108,11 @@ USE_I18N = True
 USE_TZ = True
 
 # --------------------------------------------------
-# STATIC & MEDIA
+# STATIC & MEDIA FILES
 # --------------------------------------------------
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"  # For Render collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -129,24 +128,24 @@ LOGOUT_REDIRECT_URL = "home"
 # --------------------------------------------------
 # EMAIL CONFIGURATION
 # --------------------------------------------------
-EMAIL_BACKEND_OPTION = config("EMAIL_BACKEND_OPTION", default="console")
+EMAIL_BACKEND_OPTION = config("EMAIL_BACKEND_OPTION", default="console").lower()
 
 if EMAIL_BACKEND_OPTION == "gmail":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = "smtp.gmail.com"
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 elif EMAIL_BACKEND_OPTION == "sendgrid":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = "smtp.sendgrid.net"
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-    DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+    DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="no-reply@example.com")
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     DEFAULT_FROM_EMAIL = "no-reply@example.com"
@@ -154,13 +153,13 @@ else:
 # --------------------------------------------------
 # PAYSTACK
 # --------------------------------------------------
-PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY")
-PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY")
+PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY", default="")
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY", default="")
 
 # --------------------------------------------------
 # TERMII SMS
 # --------------------------------------------------
-TERMII_API_KEY = config("TERMII_API_KEY")
+TERMII_API_KEY = config("TERMII_API_KEY", default="")
 
 # --------------------------------------------------
 # DEFAULT PRIMARY KEY
