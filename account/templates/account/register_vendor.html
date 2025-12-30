@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Register as Vendor{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2>Become a Vendor</h2>
+    <p>Fill in your store details to register as a vendor.</p>
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Register as Vendor</button>
+    </form>
+</div>
+{% endblock %}

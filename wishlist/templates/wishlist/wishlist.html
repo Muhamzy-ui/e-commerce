@@ -2,34 +2,36 @@
 {% load humanize %}
 {% block content %}
 
-<h2 class="wishlist-title">Your Wishlist ❤️</h2>
+<h2 class="wishlist-title mt-4 mb-3 text-center">Your Wishlist ❤️</h2>
 
 {% if items %}
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; padding: 20px;">
+    <div class="home-category-grid">
         {% for item in items %}
-            <div class="product-card">
-
-                <div style="width: 100%; height: 160px; border-radius: 10px; overflow: hidden; margin-bottom: 8px;">
+            <div class="card product-card shadow-sm p-2 h-100 rounded-3">
+                <!-- Product Image -->
+                <a href="{% url 'products:detail' item.product.slug %}">
                     {% if item.product.main_image %}
-                        <img src="{{ item.product.main_image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    {% else %}
-                        <img src="/static/img/no-image.png" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ item.product.main_image.url }}" class="product-img rounded-2">
                     {% endif %}
+                </a>
+
+                <!-- Product Info -->
+                <div class="card-body text-center">
+                    <h6 class="product-name">{{ item.product.name }}</h6>
+                    <p class="product-price">₦{{ item.product.price|floatformat:0|intcomma }}</p>
+
+                    <!-- Buttons -->
+                    <div class="product-card-buttons">
+                        <a href="{% url 'products:detail' item.product.slug %}" class="btn-view">View</a>
+                        <a href="{% url 'wishlist:remove' item.id %}" class="btn-add-cart">Remove</a>
+                    </div>
                 </div>
-
-                <h6 style="font-weight: 600; font-size: 14px; min-height: 35px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ item.product.name }}</h6>
-                <p style="color: #e96a00; font-weight: 700; font-size: 16px; margin: 8px 0;">₦{{ item.product.price|floatformat:0|intcomma }}</p>
-
-                <div class="product-card-buttons">
-                    <a href="/product/{{ item.product.slug }}/" class="btn-view">View</a>
-                    <a href="{% url 'wishlist:remove' item.id %}" class="btn-remove" style="flex: 1; margin: 0; padding: 8px 12px; height: 36px; line-height: 20px;">Remove</a>
-                </div>
-
             </div>
         {% endfor %}
     </div>
 
 {% else %}
-    <p style="text-align: center; padding: 40px; color: #666;">Your wishlist is empty 😔</p>
+    <p class="text-center mt-5 mb-5 text-muted">Your wishlist is empty 😔</p>
 {% endif %}
+
 {% endblock %}

@@ -10,11 +10,33 @@ function setupPasswordToggle(fieldID, toggleID) {
             toggle.classList.toggle('fa-eye-slash');
         });
     }
-};
+}
 
-setupPasswordToggle('password', 'togglePassword');
-setupPasswordToggle('password1', 'togglePassword1');
-setupPasswordToggle('password2', 'togglePassword2');
+// Apply toggles
+setupPasswordToggle('password', 'togglePassword');       // Login
+setupPasswordToggle('password1', 'togglePassword1');     // Signup password
+setupPasswordToggle('password2', 'togglePassword2');     // Signup confirm password
+
+// Optional: Password strength for signup
+const pass1 = document.getElementById('password1');
+const strengthEl = document.getElementById('passwordStrength');
+if(pass1 && strengthEl){
+    pass1.addEventListener('input', () => {
+        const val = pass1.value;
+        let strength = 'Weak';
+        let color = 'red';
+        if (val.length >= 8 && /[A-Z]/.test(val) && /[0-9]/.test(val) && /[\W]/.test(val)) {
+            strength = 'Strong';
+            color = 'green';
+        } else if (val.length >= 6) {
+            strength = 'Medium';
+            color = 'orange';
+        }
+        strengthEl.textContent = `Password Strength: ${strength}`;
+        strengthEl.style.color = color;
+    });
+}
+
 
 
 
@@ -79,3 +101,22 @@ if (closeAccountSheet) {
             searchBar.classList.toggle("show");
         });
     }
+
+    function previewImages(files) {
+    const previews = document.getElementById('previews');
+    previews.innerHTML = '';
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('preview-image-thumb');
+            img.style.width = '80px';
+            img.style.height = '80px';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '5px';
+            previews.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+}

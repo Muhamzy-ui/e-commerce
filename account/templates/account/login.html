@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="auth-container">
-    <form method="post" class="auth-form">
+    <form method="post" class="auth-form" novalidate>
         {% csrf_token %}
         <h2>Welcome Back</h2>
 
@@ -22,7 +22,7 @@
 
         <div class="input-group">
             <i class="fa fa-lock icon"></i>
-            <input type="password" name="password" id="password" placeholder="Password" required>
+            <input type="password" name="password" id="password" placeholder="Password" required minlength="8">
             <i class="fa fa-eye toggle-password" id="togglePassword"></i>
         </div>
 

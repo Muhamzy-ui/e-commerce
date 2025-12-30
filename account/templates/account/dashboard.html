@@ -25,6 +25,13 @@
             <p>{{ pending_reviews_count }}</p>
         </div>
     </div>
-
+    {% if user.is_vendor %}
+        {% if user.vendor_profile.approved %}
+            <span class="badge bg-success">Vendor Approved</span>
+        {% else %}
+            <span class="badge bg-warning">Pending Vendor Approval</span>
+        {% endif %}
+    {% endif %}
 </div>
+
 {% endblock %}

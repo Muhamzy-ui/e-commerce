@@ -72,17 +72,17 @@
         <h4 class="section-title mt-4">Latest Products</h4>
         <div class="category-grid mt-3" >
             {% for product in latest_products %}
-                <div class="product-card my-card">
+                <div class="card product-card shadow-sm p-2 h-100 rounded-3">
                     <a href="{% url 'products:detail' product.slug %}">
                         {% if product.main_image %}
-                            <img src="{{ product.main_image.url }}" class="product-img">
+                            <img src="{{ product.main_image.url }}" class="rounded-2 product-img">
                         {% else %}
-                            <img src="{% static 'category/phone.png' %}" class="product-img">
+                            <img src="{% static 'category/phone.png' %}" class="rounded-2 product-img">
                         {% endif %}
                     </a>
                     <div class="card-body text-center">
                         <p class="product-name">{{ product.name }}</p>
-                        <p class="product-price">₦{{ product.price|floatformat:0|intcomma }}</p>
+                        <p class="fw-bold text-warning">₦{{ product.price|floatformat:0|intcomma }}</p>
                     </div>
                     <a href="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart">Add to Cart</a>
                 </div>
@@ -90,23 +90,24 @@
         </div>
 
         <h4 class="section-title mt-4">Flash Sales 🔥</h4>
-        <div class="category-grid mt-3" >
-            {% for product in sales_products %}
-                <div class="product-card my-card">
-                    <a href="{% url 'products:detail' product.slug %}">
-                        {% if product.main_image %}
-                            <img src="{{ product.main_image.url }}" class="product-img">
-                        {% endif %}
-                    </a>
-                    <div class="card-body text-center">
-                        <p class="product-name">{{ product.name }}</p>
-                        <p class="product-price">₦{{ product.price |floatformat:0|intcomma }}</p>
-                    </div>
-                    <a href="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart">Add to Cart</a>
+        <div class="category-grid mt-3">
+        {% for product in sales_products %}
+            <div class="card product-card shadow-sm p-2 h-100 rounded-3">
+                <a href="{% url 'products:detail' product.slug %}">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" class="rounded-2 product-img">
+                    {% else %}
+                        <img src="{% static 'category/placeholder.png' %}" class="rounded-2 product-img">
+                    {% endif %}
+                </a>
+                <div class="card-body text-center">
+                    <h6 class="product-name">{{ product.name }}</h6>
+                    <p class="fw-bold text-warning">₦{{ product.price|floatformat:0|intcomma }}</p>
                 </div>
-            {% endfor %}
+                <a href="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart">Add to Cart</a>
+            </div>
+        {% endfor %}
         </div>
-
     </div>
 
 </div>

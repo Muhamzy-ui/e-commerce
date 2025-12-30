@@ -1,6 +1,12 @@
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+rating = models.IntegerField(
+    default=1,
+    validators=[MinValueValidator(1), MaxValueValidator(5)]
+)
 
 class Category(models.Model):
     name = models.CharField(max_length=100)

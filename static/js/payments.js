@@ -1,23 +1,27 @@
-// payments.js — small theme toggle: light, dark, ios
-function initPaymentsTheme(){
-  const btn = document.getElementById('theme-toggle');
-  const body = document.body;
-  // load
-  const saved = localStorage.getItem('mz_theme') || 'light';
-  applyTheme(saved);
+document.addEventListener("DOMContentLoaded", function () {
+  // Select all payment option cards
+  const cards = document.querySelectorAll(".payment-option-card");
 
-  if(!btn) return;
-  btn.addEventListener('click', ()=>{
-    // cycle: light -> dark -> ios
-    let cur = localStorage.getItem('mz_theme') || 'light';
-    let next = (cur === 'light') ? 'dark' : (cur === 'dark') ? 'ios' : 'light';
-    localStorage.setItem('mz_theme', next);
-    applyTheme(next);
+  cards.forEach((card) => {
+    card.addEventListener("click", function () {
+      // Deselect all cards
+      cards.forEach((c) => c.classList.remove("selected"));
+
+      // Select clicked card
+      card.classList.add("selected");
+
+      // Check the corresponding radio input
+      const radio = card.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+      }
+    });
+
+    // Also allow keyboard accessibility
+    card.addEventListener("keypress", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        card.click();
+      }
+    });
   });
-
-  function applyTheme(name){
-    body.classList.remove('theme-dark','theme-ios');
-    if(name === 'dark') body.classList.add('theme-dark');
-    if(name === 'ios') body.classList.add('theme-ios');
-  }
-}
+});

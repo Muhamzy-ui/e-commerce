@@ -3,13 +3,21 @@
 
 {% block content %}
 <div class="auth-container">
-    <form method="post" class="auth-form">
+    <form method="post" class="auth-form" novalidate>
         {% csrf_token %}
         <h2>Create Account</h2>
 
+        {% if messages %}
+            <div class="form-messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="input-group">
             <i class="fa fa-user icon"></i>
-            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="username" placeholder="Username" required minlength="3">
         </div>
 
         <div class="input-group">
@@ -19,15 +27,17 @@
 
         <div class="input-group">
             <i class="fa fa-lock icon"></i>
-            <input type="password" id="password1" name="password1" placeholder="Password" required>
+            <input type="password" id="password1" name="password1" placeholder="Password" required minlength="8">
             <i class="fa fa-eye toggle-password" id="togglePassword1"></i>
         </div>
 
         <div class="input-group">
             <i class="fa fa-lock icon"></i>
-            <input type="password" id="password2" name="password2" placeholder="Confirm Password" required>
+            <input type="password" id="password2" name="password2" placeholder="Confirm Password" required minlength="8">
             <i class="fa fa-eye toggle-password" id="togglePassword2"></i>
         </div>
+
+        <div class="password-strength" id="passwordStrength"></div>
 
         <button type="submit">Create Account</button>
 
