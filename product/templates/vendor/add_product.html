@@ -1,41 +1,100 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Add Product{% endblock %}
+{% block title %}Add Product — MZCart Elite{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-  <h3>Add a Product</h3>
-  <form method="post" enctype="multipart/form-data" class="mt-3">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <div class="mb-3">
-      {{ form.category.label_tag }} 
-      {{ form.category }}
-    </div>
-    <div class="mb-3">
-      {{ form.name.label_tag }} 
-      {{ form.name }}
-    </div>
-    <div class="mb-3">
-      {{ form.price.label_tag }} 
-      {{ form.price }}
-    </div>
-    <div class="mb-3">
-      {{ form.description.label_tag }} 
-      {{ form.description }}
-    </div>
-    <div class="mb-3">
-      {{ form.main_image.label_tag }}
-      {{ form.main_image }}
-    </div>
+<div class="elite-add-product-container py-5">
+    <div class="container" style="max-width: 900px;">
+        <!-- Header -->
+        <div class="discovery-header d-flex justify-content-between align-items-center mb-5 p-4 glass-card rounded-4">
+            <div>
+                <h2 class="fw-bold mb-0">New <span>Listing</span> ✨</h2>
+                <p class="small text-muted mb-0">List a new item in your store</p>
+            </div>
+            <div class="icon-circle bg-primary-soft text-primary shadow-sm">
+                <i class="fa-solid fa-circle-plus"></i>
+            </div>
+        </div>
 
-    <div class="mb-3">
-      <label for="id_images">Gallery images (optional)</label>
-      <input type="file" name="images" id="id_images" multiple class="form-control">
-    </div>
+        <div class="glass-card p-4 p-md-5 border-0 shadow-lg">
+            <form method="post" enctype="multipart/form-data" class="elite-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                
+                <div class="section-badge mb-4"><i class="fa-solid fa-info-circle me-2"></i> PRODUCT DETAILS</div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">PRODUCT NAME</label>
+                        <div class="input-group-elite">
+                            <i class="fa-solid fa-tag"></i>
+                            <input type="text" name="name" class="form-control" placeholder="Elite Headphones" required id="id_name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">CATEGORY</label>
+                        <div class="input-group-elite">
+                            <i class="fa-solid fa-layer-group"></i>
+                            {{ form.category }}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold">DESCRIPTION</label>
+                        <div class="input-group-elite align-items-start py-2">
+                            <i class="fa-solid fa-align-left mt-2"></i>
+                            <textarea name="description" class="form-control" rows="4" placeholder="Describe your product..." required id="id_description"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">PRICE (₦)</label>
+                        <div class="input-group-elite">
+                            <i class="fa-solid fa-naira-sign"></i>
+                            <input type="number" name="price" class="form-control" placeholder="50000" step="0.01" required id="id_price">
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 mt-5">
+                        <div class="section-badge mb-4"><i class="fa-solid fa-images me-2"></i> MEDIA GALLERY</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">MAIN IMAGE</label>
+                                <div class="glass-card p-3 bg-dark-soft border-dashed text-center">
+                                    <i class="fa-solid fa-cloud-arrow-up display-6 text-muted mb-2"></i>
+                                    {{ form.main_image }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">GALLERY IMAGES</label>
+                                <div class="glass-card p-3 bg-dark-soft border-dashed text-center">
+                                    <i class="fa-solid fa-images display-6 text-muted mb-2"></i>
+                                    <input type="file" name="images" id="id_images" multiple class="form-control bg-transparent border-0 text-muted small">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <button type="submit" class="btn btn-warning">Save Product</button>
-    <a href="{% url 'vendor:dashboard' %}" class="btn btn-link">Cancel</a>
-  </form>
+                <div class="mt-5 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1 py-3 rounded-pill fw-bold shadow-lg">
+                        <i class="fa-solid fa-rocket me-2"></i> PUBLISH LISTING
+                    </button>
+                    <a href="{% url 'vendor:dashboard' %}" class="btn btn-outline-light py-3 px-4 rounded-pill">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<style>
+    .input-group-elite { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; display: flex; align-items: center; padding: 0 15px; transition: 0.3s; }
+    .input-group-elite:focus-within { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--primary-soft); }
+    .input-group-elite i { color: var(--text-muted); font-size: 14px; margin-right: 12px; }
+    .input-group-elite .form-control, .input-group-elite select { background: transparent !important; border: none; padding: 12px 0; color: var(--text-color); width: 100%; outline: none; }
+    .section-badge { background: var(--bg-color); color: var(--text-muted); font-size: 10px; font-weight: 800; padding: 8px 15px; border-radius: 6px; letter-spacing: 1px; display: inline-block; }
+    .icon-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .bg-dark-soft { background: rgba(0,0,0,0.2); }
+    .border-dashed { border: 2px dashed var(--border-color); }
+</style>
 {% endblock %}

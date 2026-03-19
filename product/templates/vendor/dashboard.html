@@ -1,36 +1,94 @@
 {% extends "base.html" %}
-{% block title %}Vendor Dashboard{% endblock %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vendor Dashboard — MZCart Elite{% endblock %}
 
 {% block content %}
-<div class="container my-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Your Products</h2>
-    <a href="{% url 'vendor:add_product' %}" class="btn btn-warning">+ Add Product</a>
-  </div>
-
-  {% if products %}
-    <div class="row g-3">
-      {% for p in products %}
-        <div class="col-6 col-md-4 col-lg-3">
-          <div class="card">
-            {% if p.main_image %}
-              <img src="{{ p.main_image.url }}" class="card-img-top" alt="{{ p.name }}">
-            {% else %}
-              <img src="https://source.unsplash.com/400x400/?product" class="card-img-top" alt="{{ p.name }}">
-            {% endif %}
-            <div class="card-body">
-              <h6 class="card-title">{{ p.name|truncatechars:35 }}</h6>
-              <p class="mb-1 text-warning">₦{{ p.price }}</p>
-              <p class="text-muted small mb-2">{{ p.category.name }}</p>
-              <a href="{% url 'products:detail' p.slug %}" class="btn btn-sm btn-outline-primary">View</a>
-              <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
+<div class="elite-vendor-container py-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="discovery-header d-flex justify-content-between align-items-center mb-5 p-4 glass-card rounded-4">
+            <div>
+                <h2 class="fw-bold mb-0">Vendor <span>Dashboard</span> 🚀</h2>
+                <p class="small text-muted mb-0">Manage your shop and products</p>
             </div>
-          </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'vendor:analytics' %}" class="btn btn-outline-primary rounded-pill px-4">
+                    <i class="fa-solid fa-chart-line me-2"></i> Analytics
+                </a>
+                <a href="{% url 'vendor:add_product' %}" class="btn btn-primary rounded-pill px-4 shadow-lg">
+                    <i class="fa-solid fa-plus me-2"></i> Add Product
+                </a>
+            </div>
         </div>
-      {% endfor %}
+
+        <div class="row g-4">
+            <!-- Sidebar Navigation -->
+            <aside class="col-lg-3">
+                <div class="glass-card p-4 sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold mb-4">Store Management</h5>
+                    <nav class="elite-category-nav">
+                        <a href="{% url 'vendor:dashboard' %}" class="elite-cat-link active">
+                            <i class="fa-solid fa-box-open me-2 text-primary"></i> My Products
+                        </a>
+                        <a href="{% url 'vendor:analytics' %}" class="elite-cat-link">
+                            <i class="fa-solid fa-chart-pie me-2 text-success"></i> Store Insights
+                        </a>
+                        <a href="{% url 'vendor:add_product' %}" class="elite-cat-link">
+                            <i class="fa-solid fa-circle-plus me-2 text-warning"></i> New Listing
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content: Products Grid -->
+            <main class="col-lg-9">
+                {% if products %}
+                    <div class="product-grid">
+                        {% for p in products %}
+                            <div class="product-card">
+                                <a href="{% url 'products:detail' p.slug %}" class="product-img-wrapper">
+                                    {% if p.main_image %}
+                                        <img src="{{ p.main_image.url }}" alt="{{ p.name }}">
+                                    {% else %}
+                                        <img src="{% static 'category/placeholder.png' %}" alt="{{ p.name }}">
+                                    {% endif %}
+                                </a>
+                                <div class="card-body">
+                                    <span class="category-tag mb-1">{{ p.category.name|upper }}</span>
+                                    <h6 class="product-name">{{ p.name }}</h6>
+                                    <p class="product-price">₦{{ p.price|floatformat:0|intcomma }}</p>
+                                    
+                                    <div class="product-card-actions mt-3">
+                                        <a href="#" class="btn-view-elite flex-grow-1 text-center" title="Edit Product">
+                                            <i class="fa-solid fa-pen-to-square"></i> EDIT
+                                        </a>
+                                        <a href="{% url 'products:detail' p.slug %}" class="btn-view-elite px-3" title="View Listing">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <div class="glass-card p-5 d-inline-block">
+                            <i class="fa-solid fa-store-slash display-1 text-muted mb-3 opacity-25"></i>
+                            <h5>No products yet</h5>
+                            <p class="text-muted mb-4">Start selling your amazing products today!</p>
+                            <a href="{% url 'vendor:add_product' %}" class="btn btn-primary rounded-pill px-5">Add Your First Product</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </main>
+        </div>
     </div>
-  {% else %}
-    <p>No products yet. <a href="{% url 'vendor:add_product' %}">Add your first product</a>.</p>
-  {% endif %}
 </div>
+
+<style>
+    .elite-cat-link { display: flex; align-items: center; padding: 12px 15px; color: var(--text-color); text-decoration: none; font-weight: 500; border-radius: 12px; transition: 0.3s; margin-bottom: 5px; }
+    .elite-cat-link:hover, .elite-cat-link.active { background: var(--primary-soft); color: var(--primary-color); }
+    .category-tag { font-size: 10px; font-weight: 800; color: var(--text-muted); opacity: 0.7; letter-spacing: 1px; }
+</style>
 {% endblock %}

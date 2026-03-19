@@ -1,115 +1,255 @@
 {% extends "base.html" %}
 {% load static %}
 {% load humanize %}
+{% load cart_extras %}
 {% block content %}
 
-<div class="layout-wrapper">
-        <div class="sidebar p-3 rounded-3 shadow-sm">
-            <h5 class="fw-bold mb-3">Categories</h5>
-            <ul class="list-unstyled category-list mb-4">
-                {% for cat in categories %}
-                    <li>
-                        <a href="{% url 'products:category' cat.slug %}" class="category-link">
-                            {{ cat.name }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-            {% if user.is_authenticated %}
-            <h5 class="fw-bold mb-3">My Account</h5>
-            <ul class="list-unstyled account-list">
-                <li>
-                    <a href="{% url 'wishlist:list' %}" class="account-link">
-                        ❤️ Wishlist
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'orders:list' %}" class="dash-link">
-                        Orders
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'inbox:inbox' %}" class="account-link">
-                        💬 Inbox
-                        {% if unread_messages_count > 0 %}
-                            <span class="badge">{{ unread_messages_count }}</span>
-                        {% endif %}
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'reviews:pending' %}" class="account-link">
-                        ⭐ Pending Reviews
-                        {% if pending_reviews_count > 0 %}
-                            <span class="badge">{{ pending_reviews_count }}</span>
-                        {% endif %}
-                    </a>
-                </li>
-            </ul>
-            {% else %}
-            <p class="text-muted small">
-                <a href="{% url 'account:login' %}">Login</a> to manage your account    
-            </p>
-            {% endif %}
+<div class="elite-home-container py-5">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- ===== ELITE HOME SIDEBAR ===== -->
+            <aside class="col-lg-3 d-none d-lg-block">
+                <div class="glass-card p-4 h-100">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-list-ul text-primary"></i> Categories
+                    </h5>
+                    <nav class="elite-category-nav">
+                        {% for cat in categories %}
+                            <a href="{% url 'products:category' cat.slug %}" class="elite-cat-link">
+                                {{ cat.name }}
+                                <i class="fa-solid fa-chevron-right ms-auto small"></i>
+                            </a>
+                        {% endfor %}
+                    </nav>
 
-        </div>
-    <div class="main-content">
-        <h4 class="section-title">Shop by Category</h4>
-        <div class="category-grid">
-            {% for cat in categories %}
-                <a href="{% url 'products:category' cat.slug %}" class="category-link">
-                    <div class="category-card">
-                        {% if cat.image %}
-                            <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <p>{{ cat.name }}</p>
+                    <hr class="my-4 op-1">
+
+                    {% if user.is_authenticated %}
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-user text-primary"></i> Quick Access
+                        </h5>
+                        <div class="dash-links">
+                            <a href="{% url 'wishlist:list' %}" class="dash-link">
+                                <span><i class="fa-solid fa-heart me-2 text-danger"></i> Wishlist</span>
+                            </a>
+                            <a href="{% url 'orders:list' %}" class="dash-link">
+                                <span><i class="fa-solid fa-truck-fast me-2 text-warning"></i> Orders</span>
+                            </a>
+                            <a href="{% url 'inbox:inbox' %}" class="dash-link">
+                                <span><i class="fa-solid fa-envelope me-2 text-info"></i> Inbox</span>
+                                {% if unread_messages_count > 0 %}
+                                    <span class="badge rounded-pill bg-primary">{{ unread_messages_count }}</span>
+                                {% endif %}
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="auth-promo glass-card p-3 text-center bg-primary-soft">
+                            <p class="small mb-2">Login for a better experience</p>
+                            <a href="{% url 'account:login' %}" class="btn btn-sm btn-primary w-100 rounded-pill fw-bold">Login Now</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </aside>
+
+            <!-- ===== MAIN CONTENT AREA ===== -->
+            <main class="col-lg-9">
+                
+                <!-- Hero Section (Elite Banner) -->
+                <div class="elite-hero-banner glass-card mb-5 overflow-hidden position-relative">
+                    <div class="hero-content p-5 text-white position-relative z-1">
+                        <span class="badge bg-warning text-dark mb-3 fw-bold">NEW SEASON</span>
+                        <h1 class="display-4 fw-bold mb-3">Upgrade Your <br><span>Digital Life</span></h1>
+                        <p class="lead mb-4">Discover the most premium electronics and accessories <br>with MZCart exclusive deals.</p>
+                        <a href="#latest" class="btn btn-lg btn-primary rounded-pill px-5 fw-bold shadow-lg">SHOP NOW</a>
+                    </div>
+                    <div class="hero-overlay"></div>
+                </div>
+
+                <!-- Featured Categories -->
+                <section class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="section-title mb-0">Discover <span>Categories</span></h4>
+                        <a href="{% url 'products:product_list' %}" class="btn btn-link text-primary fw-bold text-decoration-none p-0">View All</a>
+                    </div>
+                    <div class="row g-3">
+                        {% for cat in categories|slice:":6" %}
+                            <div class="col-md-2 col-4">
+                                <a href="{% url 'products:category' cat.slug %}" class="text-decoration-none">
+                                    <div class="elite-cat-card">
+                                        <div class="icon-box">
+                                            {% if cat.image %}
+                                                <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
+                                            {% else %}
+                                                <i class="fa-solid fa-tags text-primary"></i>
+                                            {% endif %}
+                                        </div>
+                                        <p class="cat-name">{{ cat.name }}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Latest Products Grid -->
+                <section id="latest" class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="section-title mb-0">Latest <span>Arrivals</span></h4>
+                        <div class="slider-controls d-flex gap-2">
+                            <button class="btn elite-icon-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button class="btn elite-icon-btn"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
                     </div>
-                </a>
-            {% endfor %}
-        </div>
-
-        <h4 class="section-title mt-4">Latest Products</h4>
-        <div class="category-grid mt-3" >
-            {% for product in latest_products %}
-                <div class="card product-card shadow-sm p-2 h-100 rounded-3">
-                    <a href="{% url 'products:detail' product.slug %}">
-                        {% if product.main_image %}
-                            <img src="{{ product.main_image.url }}" class="rounded-2 product-img">
-                        {% else %}
-                            <img src="{% static 'category/phone.png' %}" class="rounded-2 product-img">
-                        {% endif %}
-                    </a>
-                    <div class="card-body text-center">
-                        <p class="product-name">{{ product.name }}</p>
-                        <p class="fw-bold text-warning">₦{{ product.price|floatformat:0|intcomma }}</p>
+                    <div class="product-grid">
+                        {% for product in latest_products %}
+                            <div class="product-card">
+                                <a href="{% url 'products:detail' product.slug %}" class="product-img-wrapper">
+                                    {% if product.main_image %}
+                                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                                    {% else %}
+                                        <img src="{% static 'category/phone.png' %}" alt="{{ product.name }}">
+                                    {% endif %}
+                                    <div class="card-badges">
+                                        <span class="badge bg-primary">NEW</span>
+                                    </div>
+                                </a>
+                                <div class="card-body">
+                                    <div class="category-small mb-1">{{ product.category.name|upper }}</div>
+                                    <h6 class="product-name">{{ product.name }}</h6>
+                                    <p class="product-price">₦{{ product.price|floatformat:0|intcomma }}</p>
+                                    <div class="product-card-actions">
+                                        <a href="{% url 'products:detail' product.slug %}" class="btn-view-elite" title="Quick View">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'cart:add_to_cart' product.id %}" class="btn-add-cart position-relative">
+                                            <i class="fa-solid fa-cart-shopping"></i> ADD
+                                            {% with qty=product.id|cart_quantity:request %}
+                                                {% if qty > 0 %}
+                                                    <span class="cart-counter-badge">{{ qty }}</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <a href="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart">Add to Cart</a>
-                </div>
-            {% endfor %}
-        </div>
+                </section>
 
-        <h4 class="section-title mt-4">Flash Sales 🔥</h4>
-        <div class="category-grid mt-3">
-        {% for product in sales_products %}
-            <div class="card product-card shadow-sm p-2 h-100 rounded-3">
-                <a href="{% url 'products:detail' product.slug %}">
-                    {% if product.main_image %}
-                        <img src="{{ product.main_image.url }}" class="rounded-2 product-img">
-                    {% else %}
-                        <img src="{% static 'category/placeholder.png' %}" class="rounded-2 product-img">
-                    {% endif %}
-                </a>
-                <div class="card-body text-center">
-                    <h6 class="product-name">{{ product.name }}</h6>
-                    <p class="fw-bold text-warning">₦{{ product.price|floatformat:0|intcomma }}</p>
-                </div>
-                <a href="{% url 'cart:add_to_cart' product.id %}" class="add-to-cart">Add to Cart</a>
-            </div>
-        {% endfor %}
+                <!-- Flash Sales Section -->
+                <section class="mb-5 py-4 px-4 rounded-4 bg-primary-soft">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="section-title mb-0">Flash <span>Sales 🔥</span></h4>
+                        <div class="countdown-timer d-flex gap-2 align-items-center">
+                            <span class="text-muted small fw-bold">Ending in:</span>
+                            <div class="timer-unit glass-card px-2 py-1 small fw-bold flash-timer-display">00:00:00</div>
+                        </div>
+                    </div>
+                    <div class="product-grid">
+                        {% for product in sales_products %}
+                            <div class="product-card glass-card">
+                                <a href="{% url 'products:detail' product.slug %}" class="product-img-wrapper">
+                                    {% if product.main_image %}
+                                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                                    {% else %}
+                                        <img src="{% static 'category/placeholder.png' %}" alt="{{ product.name }}">
+                                    {% endif %}
+                                    <div class="card-badges">
+                                        <span class="badge bg-danger">SALE</span>
+                                    </div>
+                                </a>
+                                <div class="card-body">
+                                    <h6 class="product-name">{{ product.name }}</h6>
+                                    <p class="product-price">₦{{ product.price|floatformat:0|intcomma }}</p>
+                                    <div class="product-card-actions">
+                                        <a href="{% url 'products:detail' product.slug %}" class="btn-view-elite" title="Quick View">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'cart:add_to_cart' product.id %}" class="btn-add-cart position-relative">
+                                            <i class="fa-solid fa-cart-shopping"></i> ADD
+                                            {% with qty=product.id|cart_quantity:request %}
+                                                {% if qty > 0 %}
+                                                    <span class="cart-counter-badge">{{ qty }}</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+            </main>
         </div>
     </div>
-
 </div>
+
+<style>
+    .elite-cat-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        color: var(--text-color);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        border-radius: 8px;
+        transition: var(--transition);
+    }
+    .elite-cat-link:hover {
+        background: rgba(255, 122, 0, 0.1);
+        color: var(--primary-color);
+        padding-left: 20px;
+    }
+    .elite-hero-banner {
+        height: 400px;
+        background: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80') center/cover;
+        border: none;
+        border-radius: 24px;
+    }
+    .hero-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
+    }
+    .display-4 span { color: var(--primary-color); }
+    .elite-cat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px 10px;
+        text-align: center;
+        transition: var(--transition);
+        height: 100%;
+    }
+    .elite-cat-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow);
+    }
+    .elite-cat-card .icon-box {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    .elite-cat-card .icon-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .elite-cat-card .cat-name { font-size: 13px; font-weight: 700; color: var(--text-color); margin: 0; }
+    .bg-primary-soft { background: rgba(255, 122, 0, 0.05); }
+    .category-small { font-size: 10px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; }
+    .card-badges { position: absolute; top: 12px; right: 12px; z-index: 2; }
+    
+    @media (max-width: 768px) {
+        .elite-hero-banner { height: 260px; } /* Slightly more compact */
+        .hero-content { padding: 30px !important; text-align: center; width: 100%; }
+        .display-4 { font-size: 1.8rem; }
+        .hero-content h1 br { display: none; } /* Remove break on mobile */
+    }
+</style>
 
 {% endblock %}

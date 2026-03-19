@@ -2,48 +2,84 @@
 {% block title %}Sign Up — My Jumia{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <form method="post" class="auth-form" novalidate>
-        {% csrf_token %}
-        <h2>Create Account</h2>
-
-        {% if messages %}
-            <div class="form-messages">
-                {% for message in messages %}
-                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-                {% endfor %}
+<div class="elite-auth-wrapper py-5">
+    <div class="container d-flex justify-content-center">
+        <div class="glass-card p-5 auth-card shadow-lg" style="max-width: 500px; width: 100%;">
+            <div class="text-center mb-4">
+                <div class="auth-icon-circle mb-3 mx-auto">
+                    <i class="fa-solid fa-user-plus text-primary"></i>
+                </div>
+                <h3 class="fw-bold">Create <span>Account</span></h3>
+                <p class="text-muted small">Join MZCart to experience elite shopping</p>
             </div>
-        {% endif %}
 
-        <div class="input-group">
-            <i class="fa fa-user icon"></i>
-            <input type="text" name="username" placeholder="Username" required minlength="3">
+            {% if messages %}
+                <div class="form-messages mb-4">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'info' }} rounded-pill px-4 small border-0 shadow-sm">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" class="elite-auth-form" novalidate>
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-12 mb-3">
+                        <label class="form-label small fw-bold text-muted">USERNAME</label>
+                        <div class="input-group-elite">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" name="username" class="form-control glass-input" placeholder="Choose a username" required minlength="3">
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 mb-3">
+                        <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+                        <div class="input-group-elite">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" name="email" class="form-control glass-input" placeholder="your@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label small fw-bold text-muted">PASSWORD</label>
+                        <div class="input-group-elite position-relative">
+                            <i class="fa-solid fa-key"></i>
+                            <input type="password" name="password1" id="password1" class="form-control glass-input" placeholder="Create password" required minlength="8">
+                            <i class="fa-solid fa-eye toggle-password" id="togglePassword1"></i>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-4">
+                        <label class="form-label small fw-bold text-muted">CONFIRM PASSWORD</label>
+                        <div class="input-group-elite position-relative">
+                            <i class="fa-solid fa-check-double"></i>
+                            <input type="password" name="password2" id="password2" class="form-control glass-input" placeholder="Repeat password" required minlength="8">
+                            <i class="fa-solid fa-eye toggle-password" id="togglePassword2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="password-strength mb-4" id="passwordStrength"></div>
+
+                <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-lg">CREATE MY ACCOUNT</button>
+
+                <div class="text-center mt-5">
+                    <p class="small text-muted mb-0">Already have an account?</p>
+                    <a href="{% url 'account:login' %}" class="fw-bold text-primary text-decoration-none">Login Here</a>
+                </div>
+            </form>
         </div>
-
-        <div class="input-group">
-            <i class="fa fa-envelope icon"></i>
-            <input type="email" name="email" placeholder="Email" required>
-        </div>
-
-        <div class="input-group">
-            <i class="fa fa-lock icon"></i>
-            <input type="password" id="password1" name="password1" placeholder="Password" required minlength="8">
-            <i class="fa fa-eye toggle-password" id="togglePassword1"></i>
-        </div>
-
-        <div class="input-group">
-            <i class="fa fa-lock icon"></i>
-            <input type="password" id="password2" name="password2" placeholder="Confirm Password" required minlength="8">
-            <i class="fa fa-eye toggle-password" id="togglePassword2"></i>
-        </div>
-
-        <div class="password-strength" id="passwordStrength"></div>
-
-        <button type="submit">Create Account</button>
-
-        <p>Already have an account?
-            <a href="{% url 'account:login' %}">Login</a>
-        </p>
-    </form>
+    </div>
 </div>
+
+<style>
+    .auth-icon-circle { width: 70px; height: 70px; background: var(--primary-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+    .input-group-elite { position: relative; }
+    .input-group-elite i:not(.toggle-password) { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); opacity: 0.6; }
+    .input-group-elite .glass-input { padding-left: 50px; height: 55px; border-radius: 15px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); }
+    .input-group-elite .glass-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.1); }
+    .toggle-password { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); transition: 0.3s; }
+    .toggle-password:hover { color: var(--primary-color); }
+    .password-strength { height: 4px; border-radius: 2px; background: var(--border-color); overflow: hidden; }
+</style>
 {% endblock %}

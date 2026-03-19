@@ -2,64 +2,85 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
+<div class="container mt-5">
+    <div class="row g-4">
 
-        <!-- ===== SIDEBAR ===== -->
-        <aside class="col-md-3">
-            <div class="dashboard-sidebar">
-
+        <!-- ===== ELITE SIDEBAR ===== -->
+        <aside class="col-lg-3 col-md-12 mb-4">
+            <div class="dashboard-sidebar elite-mobile-fix">
                 <!-- User Info -->
                 <div class="user-box">
-                    <div class="avatar">{{ request.user.username|first|upper }}</div>
+                    <div class="avatar-elite">{{ request.user.username|first|upper }}</div>
                     <div class="user-info">
-                        <p class="welcome">Hello,</p>
+                        <p class="welcome">WELCOME,</p>
                         <h6 class="username">{{ request.user.username }}</h6>
                     </div>
                 </div>
 
                 <!-- Links -->
-                <nav class="dash-links">
-                    <a href="{% url 'home' %}" class="dash-link">Home</a>
-                    <a href="{% url 'account:dashboard' %}" class="dash-link">Dashboard</a>
+                <nav class="dash-links elite-flex-nav">
+                    <a href="{% url 'home' %}" class="dash-link">
+                        <span><i class="fa-solid fa-house me-2"></i>Home</span>
+                    </a>
+                    <a href="{% url 'account:dashboard' %}" class="dash-link active-elite">
+                        <span><i class="fa-solid fa-gauge-high me-2"></i>Dashboard</span>
+                    </a>
                     <a href="{% url 'inbox:inbox' %}" class="dash-link">
-                        Inbox
+                        <span><i class="fa-solid fa-envelope me-2"></i>Inbox</span>
                         {% if unread_messages_count %}
-                            <span class="badge">{{ unread_messages_count }}</span>
+                            <span class="badge rounded-pill bg-primary">{{ unread_messages_count }}</span>
                         {% endif %}
                     </a>
                     <a href="{% url 'reviews:pending' %}" class="dash-link">
-                        Pending Reviews
-                        {% if pending_reviews_count %}
-                            <span class="badge">{{ pending_reviews_count }}</span>
-                        {% endif %}
+                        <span><i class="fa-solid fa-star-half-stroke me-2"></i>Pending Reviews</span>
                     </a>
-                    <a href="{% url 'wishlist:list' %}" class="dash-link">Wishlist</a>
-                    <a href="{% url 'orders:list' %}" class="dash-link">Orders</a>
+                    <a href="{% url 'wishlist:list' %}" class="dash-link">
+                        <span><i class="fa-solid fa-heart me-2"></i>Wishlist</span>
+                    </a>
+                    <a href="{% url 'orders:list' %}" class="dash-link">
+                        <span><i class="fa-solid fa-basket-shopping me-2"></i>Orders</span>
+                    </a>
 
-                    {% if user.is_vendor %}
-                        {% if user.vendor_profile.approved %}
-                            <a href="{% url 'vendor:dashboard' %}" class="dash-link">My Products</a>
-                            <a href="{% url 'vendor:add_product' %}" class="dash-link">Add Product</a>
-                            <a href="{% url 'vendor:analytics' %}" class="dash-link">Vendor Analytics</a>
-                            <span class="dash-link text-success fw-bold">✔ Vendor Approved</span>
+                    <div class="border-top my-3 pt-3">
+                        {% if user.is_vendor %}
+                            {% if user.vendor_profile.approved %}
+                                <a href="{% url 'vendor:dashboard' %}" class="dash-link text-success">
+                                    <span><i class="fa-solid fa-shop me-2"></i>Vendor Panel</span>
+                                </a>
+                            {% else %}
+                                <div class="dash-link text-info">
+                                    <span><i class="fa-solid fa-clock me-2"></i>Approval Pending</span>
+                                </div>
+                            {% endif %}
                         {% else %}
-                            <span class="dash-link text-warning fw-bold">⏳ Vendor Approval Pending</span>
+                            <a href="{% url 'account:register_vendor' %}" class="dash-link text-primary fw-bold">
+                                <span><i class="fa-solid fa-rocket me-2"></i>Become a Vendor</span>
+                            </a>
                         {% endif %}
-                    {% else %}
-                        <a href="{% url 'account:register_vendor' %}" class="dash-link">Become a Vendor</a>
-                    {% endif %}
+                    </div>
 
-                    <a href="{% url 'account:logout' %}" class="dash-link logout">Logout</a>
+                    <a href="{% url 'account:logout' %}" class="dash-link text-danger mt-3">
+                        <span><i class="fa-solid fa-power-off me-2"></i>Logout</span>
+                    </a>
                 </nav>
             </div>
         </aside>
 
-        <!-- ===== MAIN CONTENT ===== -->
-        <main class="col-md-9">
-            {% block dashboard_content %}{% endblock %}
+        <!-- ===== MAIN CONTENT AREA ===== -->
+        <main class="col-lg-9 col-md-12">
+            <div class="glass-card p-4 min-vh-75">
+                {% block dashboard_content %}{% endblock %}
+            </div>
         </main>
 
     </div>
 </div>
+
+<style>
+    .active-elite {
+        background-color: rgba(255, 122, 0, 0.1) !important;
+        color: var(--primary-color) !important;
+        padding-left: 20px !important;
+    }
+</style>
 {% endblock %}

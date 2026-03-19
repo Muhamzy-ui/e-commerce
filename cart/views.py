@@ -19,14 +19,17 @@ def add_to_cart(request, product_id):
     cart.add(product)
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
-def decrease_cart(request, product_id):
+def adjust_cart(request, product_id, action):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.decrease(product)
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    if action == 'increase':
+        cart.add(product)
+    elif action == 'decrease':
+        cart.decrease(product)
+    return redirect('cart:cart_page')
 
 def remove_from_cart(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect('cart:cart_page')

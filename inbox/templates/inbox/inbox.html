@@ -1,20 +1,28 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "account/dashboard_base.html" %}
+{% block title %}Inbox | MZCart{% endblock %}
 
-<div class="container mt-4">
-    <h4 class="fw-bold mb-3">Inbox</h4>
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">Inbox</h4>
+    <span class="badge bg-primary rounded-pill">{{ unread_messages_count }} Messages</span>
+</div>
 
+<div class="inbox-list">
     {% if messages %}
         {% for msg in messages %}
-        <div class="p-3 mb-2 rounded shadow-sm {% if not msg.is_read %}bg-light{% endif %}">
-            <h6 class="mb-1">{{ msg.title }}</h6>
-            <p class="small text-muted">{{ msg.body }}</p>
-            <small class="text-muted">{{ msg.created_at|date:"M d, Y" }}</small>
+        <div class="glass-card p-3 mb-3 border-start border-4 {% if not msg.is_read %}border-primary{% else %}border-muted{% endif %} shadow-sm">
+            <div class="d-flex justify-content-between">
+                <h6 class="fw-bold mb-1">{{ msg.title }}</h6>
+                <small class="text-muted">{{ msg.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="small text-muted mb-0">{{ msg.body }}</p>
         </div>
         {% endfor %}
     {% else %}
-        <p>No messages yet 📭</p>
+        <div class="text-center py-5">
+            <i class="fa-solid fa-envelope-open text-muted mb-3" style="font-size: 3rem;"></i>
+            <p class="text-muted">Your inbox is empty. We'll notify you here about updates!</p>
+        </div>
     {% endif %}
 </div>
-
 {% endblock %}

@@ -1,185 +1,434 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
-
+{% load static %}
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MZ Cart{% endblock %}</title>
-
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome for icons -->
+    <title>{% block title %}MZCart | Elite Shopping{% endblock %}</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom Styles -->
-     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    <script>
+        // Critical: Set theme immediately to prevent flashing
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
 </head>
+<body class="d-flex flex-column min-vh-100">
 
-<body>
-    <!-- Navbar -->
-    <header class="jumia-navbar">
-        <div class="container-fluid nav-inner">
-
-            <!-- Sidebar Toggle for mobile -->
-            <button id="sidebarToggle" class="sidebar-toggle d-md-none" aria-label="Open categories">
-                <i class="fa fa-bars"></i>
-            </button>
-
-            <!-- Logo -->
-            <a href="{% url 'home' %}" class="nav-logo">
-                <span>MZ</span>Cart
-            </a>
-
-            <!-- Search (desktop) -->
-            <div class="nav-search d-none d-md-flex">
-                <div class="search-container d-flex" style="position: relative; flex: 1;">
-                    <input type="text" class="desktop-search-input" placeholder="Search products, brands and categories">
-                    <button type="button" class="desktop-search-btn"><i class="fa fa-search"></i></button>
-                    <div class="desktop-search-results"></div>
+    <!-- Top Elite Notification Toast (Fixed at Top) -->
+    <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2100;">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast show elite-toast align-items-center text-white bg-{{ message.tags }} border-0 shadow-lg mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body p-3">
+                            <i class="fa-solid {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-circle-xmark{% else %}fa-circle-info{% endif %} me-2"></i>
+                            {{ message }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 
-            <!-- Right Icons -->
-            <div class="nav-actions">
-                <!-- Mobile Search -->
-                <button id="mobileSearchToggle" class="mobile-search-toggle d-md-none" aria-label="Open search">
-                    <i class="fa fa-search"></i>
-                </button>
 
-                <!-- Account Dropdown -->
-                {% if user.is_authenticated %}
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-user"></i>
-                        <span class="d-none d-md-inline">Account</span>
+    <!-- Top Elite Header -->
+    <header class="elite-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center justify-content-between py-2">
+                <!-- Mobile Menu & Logo -->
+                <div class="d-flex align-items-center gap-2">
+                    <button class="elite-icon-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#eliteOffcanvas" aria-controls="eliteOffcanvas">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                    <a class="nav-logo" href="{% url 'home' %}">
+                        MZ<span>Cart</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
-                        <li><a class="dropdown-item" href="{% url 'home' %}">Home</a></li>
-                        <li><a class="dropdown-item" href="{% url 'account:dashboard' %}">Dashboard</a></li>
-                        <li>
-                            <a class="dropdown-item d-flex justify-content-between align-items-center" href="{% url 'inbox:inbox' %}">
-                                Inbox
-                                {% if unread_messages_count %}
-                                    <span class="badge bg-danger">{{ unread_messages_count }}</span>
-                                {% endif %}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex justify-content-between align-items-center" href="{% url 'reviews:pending' %}">
-                                Pending Reviews
-                                {% if pending_reviews_count %}
-                                    <span class="badge bg-warning">{{ pending_reviews_count }}</span>
-                                {% endif %}
-                            </a>
-                        </li>
-                        <li><a class="dropdown-item" href="{% url 'wishlist:list' %}">Wishlist</a></li>
-                        <li><a class="dropdown-item" href="{% url 'orders:list' %}">Orders</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'account:logout' %}">Logout</a></li>
-                    </ul>
                 </div>
-                {% else %}
-                <a href="{% url 'account:login' %}" class="nav-link">
-                    <i class="fa fa-user"></i>
-                    <span class="d-none d-md-inline">Login</span>
-                </a>
-                {% endif %}
 
-                <!-- Cart -->
-                <a href="{% url 'cart:cart_page' %}" class="nav-link cart-link">
-                    <i class="fa fa-shopping-cart"></i>
-                    {% if request.session.cart %}
-                        <span class="cart-badge">{{ request.session.cart|length }}</span>
-                    {% endif %}
-                    <span class="d-none d-md-inline">Cart</span>
-                </a>
+                <!-- Search Bar (Elite Premium - Unified) -->
+                <div class="nav-search-container ms-lg-4" id="desktop-search-container">
+                    <form action="{% url 'products:search' %}" method="GET" class="w-100 d-flex position-relative search-form-elite">
+                        <label for="header-search-input" class="search-icon-label">
+                            <i class="fa-solid fa-magnifying-glass search-icon-overlay"></i>
+                        </label>
+                        <input type="text" name="q" id="header-search-input" class="header-search-input live-search-input" placeholder="Search..." autocomplete="off">
+                        <div class="live-search-container"></div>
+                    </form>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="nav-elite-actions d-flex align-items-center gap-2 gap-sm-4">
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle" class="elite-icon-btn" title="Toggle Mode">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <!-- User Actions (Icon Only for Elite) -->
+                    <div class="dropdown">
+                        <a href="#" class="elite-nav-link dropdown-toggle no-caret" id="accountDropdown" data-bs-toggle="dropdown">
+                            <div class="nav-avatar-circle">
+                                {% if user.is_authenticated %}
+                                    {{ user.username|first|upper }}
+                                {% else %}
+                                    <i class="fa-regular fa-user"></i>
+                                {% endif %}
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 glass-dropdown p-2 mt-2">
+                            {% if user.is_authenticated %}
+                                <li class="px-3 py-2 small fw-bold text-primary border-bottom mb-2 d-flex align-items-center">
+                                    <i class="fa-solid fa-circle-check me-2"></i> {{ user.username }}
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'home' %}"><i class="fa-solid fa-house me-2"></i>Home</a></li>
+                                <li><a class="dropdown-item" href="{% url 'account:dashboard' %}"><i class="fa-solid fa-gauge-high me-2"></i>My Dashboard</a></li>
+                                
+                                <li class="dropdown-header small text-muted mt-2">SHOPPING</li>
+                                <li><a class="dropdown-item" href="{% url 'orders:list' %}"><i class="fa-solid fa-box-open me-2"></i>Orders</a></li>
+                                <li><a class="dropdown-item" href="{% url 'wishlist:list' %}" class="d-flex justify-content-between">
+                                    <span><i class="fa-solid fa-heart me-2"></i>Wishlist</span>
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'inbox:inbox' %}"><i class="fa-solid fa-envelope me-2"></i>Inbox</a></li>
+
+                                <li class="dropdown-header small text-muted mt-2">VENDORS</li>
+                                {% if not user.vendor_profile %}
+                                    <li><a class="dropdown-item text-primary fw-bold" href="{% url 'account:register_vendor' %}">
+                                        <i class="fa-solid fa-shop me-2"></i>Become a Vendor
+                                    </a></li>
+                                {% elif user.vendor_profile.approved %}
+                                    <li><a class="dropdown-item text-success fw-bold" href="{% url 'vendor:dashboard' %}">
+                                        <i class="fa-solid fa-desktop me-2"></i>Vendor Panel
+                                    </a></li>
+                                {% else %}
+                                    <li class="px-3 small text-warning"><i class="fa-solid fa-clock-rotate-left me-1"></i> Approval Pending</li>
+                                {% endif %}
+
+                                {% if user.is_superuser %}
+                                    <li class="dropdown-divider"></li>
+                                    <li class="dropdown-header small text-danger mt-1">ADMINISTRATOR</li>
+                                    <li><a class="dropdown-item text-primary fw-bold" href="{% url 'account:verify_vendors' %}">
+                                        <i class="fa-solid fa-user-shield me-2"></i>VERIFY VENDORS
+                                    </a></li>
+                                {% endif %}
+                                {% if user.is_vendor %}
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header text-primary small fw-bold">VENDOR PANEL</h6>
+                                <li><a class="dropdown-item" href="{% url 'vendor:dashboard' %}"><i class="fa-solid fa-gauge-high me-2"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{% url 'vendor:add_product' %}"><i class="fa-solid fa-plus-circle me-2"></i> Add Product</a></li>
+                                <li><a class="dropdown-item" href="{% url 'vendor:analytics' %}"><i class="fa-solid fa-chart-line me-2"></i> Analytics</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item" href="{% url 'account:register_vendor' %}"><i class="fa-solid fa-store me-2"></i> Become a Vendor</a></li>
+                            {% endif %}
+                            <div class="dropdown-divider"></div>
+                            <li><a class="dropdown-item text-danger" href="{% url 'account:logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item fw-bold text-center bg-primary text-white rounded-pill mb-2 py-2" href="{% url 'account:login' %}">Login</a></li>
+                                <li><a class="dropdown-item text-center small text-muted" href="{% url 'account:register' %}">Create account</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <!-- Cart (Icon Only for Elite) -->
+                    <a href="{% url 'cart:cart_page' %}" class="elite-nav-link elite-cart-btn">
+                        <div class="cart-icon-wrapper">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            {% if cart_count > 0 %}
+                                <span class="cart-badge">{{ cart_count }}</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
             </div>
-        </div>
+            
+        </nav>
     </header>
 
-    <!-- Spacer for navbar -->
-    <div style="height:80px;"></div>
+    <!-- Elite Mobile Off-canvas -->
+    <div class="offcanvas offcanvas-start glass-card" tabindex="-1" id="eliteOffcanvas" aria-labelledby="eliteOffcanvasLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="eliteOffcanvasLabel">MZ<span>Cart</span> Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- Categories Link -->
+            <div class="mb-4">
+                <h6 class="text-primary small fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-list-ul"></i> CATEGORIES
+                </h6>
+                <nav class="elite-category-nav">
+                    {% for cat in categories %}
+                        <a href="{% url 'products:category' cat.slug %}" class="elite-cat-link">
+                            {{ cat.name }}
+                            <i class="fa-solid fa-chevron-right ms-auto small opacity-50"></i>
+                        </a>
+                    {% endfor %}
+                </nav>
+            </div>
+            
+            <div class="dropdown-divider my-4"></div>
 
-    <!-- Page Content -->
-    <main>
+            <!-- Quick Links -->
+            <div>
+                <h6 class="text-primary small fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-circle-user"></i> QUICK LINKS
+                </h6>
+                <div class="dash-links d-flex flex-column gap-2">
+                    <a href="{% url 'account:dashboard' %}" class="dash-link">
+                        <span><i class="fa-solid fa-gauge-high me-2 text-primary"></i> Dashboard</span>
+                    </a>
+                    <a href="{% url 'wishlist:list' %}" class="dash-link">
+                        <span><i class="fa-solid fa-heart me-2 text-danger"></i> Wishlist</span>
+                    </a>
+                    <a href="{% url 'orders:list' %}" class="dash-link">
+                        <span><i class="fa-solid fa-truck-fast me-2 text-warning"></i> Orders</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content wrapper -->
+    <div class="content-viewport flex-grow-1">
         {% block content %}{% endblock %}
-    </main>
+    </div>
 
-    <!-- Mobile Bottom Navigation -->
-    <div class="mobile-bottom-nav d-md-none">
-        <a href="{% url 'home' %}">
-            <i class="fa fa-home"></i>
+    <!-- Flex Elite Footer -->
+    <footer class="elite-footer bg-dark text-white pt-5 pb-4 mt-auto">
+        <div class="container">
+            <div class="footer-flex-container d-flex flex-wrap justify-content-between gap-5 mb-5">
+                <div class="footer-brand" style="flex: 1 1 300px;">
+                    <h4 class="nav-logo mb-3 text-white">MZ<span>Cart</span></h4>
+                    <p class="text-secondary small">The most premium shopping experience in Nigeria. Quality products, fast delivery, and exceptional support.</p>
+                    <div class="social-icons d-flex gap-3 mt-4">
+                        <a href="#" class="text-white opacity-75 hover-op-100"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="text-white opacity-75 hover-op-100"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="text-white opacity-75 hover-op-100"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="text-white opacity-75 hover-op-100"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links-group d-flex flex-wrap gap-5" style="flex: 2 1 400px;">
+                    <div class="footer-links-col">
+                        <h6 class="fw-bold mb-4 text-primary">SHOP</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-secondary text-decoration-none small mb-2 d-block hover-text-white">Categories</a></li>
+                            <li><a href="#" class="text-secondary text-decoration-none small mb-2 d-block hover-text-white">Flash Sales</a></li>
+                            <li><a href="#" class="text-secondary text-decoration-none small mb-2 d-block hover-text-white">New Arrivals</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links-col">
+                        <h6 class="fw-bold mb-4 text-primary">SUPPORT</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-secondary text-decoration-none small mb-2 d-block hover-text-white">Help Center</a></li>
+                            <li><a href="#" class="text-secondary text-decoration-none small mb-2 d-block hover-text-white">Track Order</a></li>
+                            <li><a href="#" class="text-secondary text-decoration-none small mb-2 d-block hover-text-white">Returns</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-newsletter" style="flex: 1 1 250px;">
+                        <h6 class="fw-bold mb-4 text-primary">NEWSLETTER</h6>
+                        <p class="text-secondary small mb-3">Subscribe for exclusive deals.</p>
+                        <form class="d-flex gap-2">
+                            <input type="email" placeholder="Email" class="form-control bg-transparent border-secondary text-white rounded-pill small">
+                            <button class="btn btn-primary rounded-pill px-3 fw-bold small">JOIN</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom border-top border-secondary pt-4 text-center">
+                <p class="text-secondary extra-small">&copy; 2026 MZCart. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Elite Mobile Bottom Navigator -->
+    <div class="mobile-bottom-nav d-lg-none">
+        <a href="{% url 'home' %}" class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i>
             <span>Home</span>
         </a>
-        <a href="{% url 'products:product_list' %}">
-            <i class="fa fa-th-large"></i>
-            <span>Categories</span>
+        <a href="{% url 'products:product_list' %}" class="nav-item {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>Browse</span>
         </a>
-        <a href="{% url 'cart:cart_page' %}">
-            <i class="fa fa-shopping-cart"></i>
+        <a href="#" class="nav-item" onclick="document.getElementById('desktop-search-container').classList.toggle('expanded'); document.querySelector('.header-search-input').focus(); return false;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </a>
+        <a href="{% url 'cart:cart_page' %}" class="nav-item position-relative {% if request.resolver_match.url_name == 'cart_page' %}active{% endif %}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            {% if cart_count > 0 %}<span class="badge rounded-pill bg-primary mobile-cart-badge">{{ cart_count }}</span>{% endif %}
             <span>Cart</span>
         </a>
-        <a href="{% url 'account:dashboard' %}">
-            <i class="fa fa-user"></i>
+        <a href="{% url 'account:dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="fa-solid fa-user"></i>
             <span>Account</span>
         </a>
     </div>
 
-    <!-- Footer -->
-    <footer class="jumia-footer">
-    <div class="container">
-        <div class="row gy-4 align-items-center">
-
-            <!-- About Section -->
-            <div class="col-md-4 col-12">
-                <h5>MZ Cart</h5>
-                <p>Shop from thousands of products, enjoy fast delivery, and secure payments. Your trusted online store.</p>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="col-md-4 col-12">
-                <h5>Quick Links</h5>
-                <ul class="list-unstyled footer-links">
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Track Orders</a></li>
-                    <li><a href="#">Become a Seller</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </div>
-
-            <!-- Social Media -->
-            <div class="col-md-4 col-12 text-md-end">
-                <h5>Follow Us</h5>
-                <div class="social-icons d-flex justify-content-md-end gap-3">
-                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-
-        </div>
-
-        <hr class="mt-4" style="border-color: rgba(255,255,255,0.2);">
-
-        <!-- Footer Bottom -->
-        <p class="text-center mt-3 small">&copy; 2025 My Jumia. All rights reserved.</p>
-    </div>
-</footer>
-
-
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/sidebar-mobile.js' %}"></script>
-    <script src="{% static 'js/search-live.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/payments.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const html = document.documentElement;
 
-    <!-- Desktop hover for account dropdown -->
+        // Theme Toggle
+        function updateUI() {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            updateUI();
+        });
 
 
+        // Initialize theme
+        updateUI();
 
+        // Flash Sale Timer
+        function startTimer() {
+            const timerElements = document.querySelectorAll('.flash-timer-display');
+            if (timerElements.length === 0) return;
+
+            let seconds = 3600 * 5; // 5 hours for demo
+            
+            setInterval(() => {
+                seconds--;
+                if (seconds <= 0) seconds = 3600 * 5;
+                
+                const h = Math.floor(seconds / 3600);
+                const m = Math.floor((seconds % 3600) / 60);
+                const s = seconds % 60;
+                
+                const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                timerElements.forEach(el => el.textContent = timeStr);
+            }, 1000);
+        }
+        startTimer();
+
+        // Auto-hide toasts after 5 seconds
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(t => {
+                const bsToast = new bootstrap.Toast(t);
+                bsToast.hide();
+            });
+        }, 5000);
+
+        // Unified Search Expansion
+        const searchInput = document.getElementById('header-search-input');
+        const searchContainer = document.getElementById('desktop-search-container');
+        
+        if (searchInput && searchContainer) {
+            searchInput.addEventListener('focus', () => {
+                searchContainer.classList.add('expanded');
+            });
+            
+            // Container click expands it too (for the icon)
+            searchContainer.addEventListener('click', (e) => {
+                if (!searchContainer.classList.contains('expanded')) {
+                    searchContainer.classList.add('expanded');
+                    searchInput.focus();
+                }
+            });
+        }
+
+        // --- LIVE SEARCH LOGIC ---
+        const liveSearchInputs = document.querySelectorAll('.live-search-input');
+        
+        liveSearchInputs.forEach(input => {
+            const container = input.closest('form').querySelector('.live-search-container');
+            let debounceTimer;
+
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim();
+
+                if (query.length < 1) {
+                    container.style.display = 'none';
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetch(`/product/search-live/?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            renderSearchResults(data, container);
+                        });
+                }, 300);
+            });
+        });
+
+        function renderSearchResults(data, container) {
+            container.innerHTML = '';
+            if ((!data.products || data.products.length === 0) && (!data.categories || data.categories.length === 0)) {
+                container.innerHTML = '<div class="p-4 text-center"><i class="fa-solid fa-face-frown d-block mb-2 opacity-50 fs-2"></i><div class="fw-bold text-muted">Product Not Available</div><div class="extra-small text-muted mt-1">Try another keyword</div></div>';
+                container.style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            if (data.categories.length > 0) {
+                html += '<div class="live-search-section-label">CATEGORIES</div>';
+                data.categories.forEach(cat => {
+                    html += `
+                        <a href="/product/category/${cat.slug}/" class="live-search-item">
+                            <i class="fa-solid fa-tags text-primary opacity-50"></i>
+                            <div class="item-info">
+                                <div class="name">${cat.name}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+            }
+
+            if (data.products.length > 0) {
+                html += '<div class="live-search-section-label">PRODUCTS</div>';
+                data.products.forEach(p => {
+                    const img = p.main_image || '{% static "category/placeholder.png" %}';
+                    html += `
+                        <a href="/product/${p.slug}/" class="live-search-item">
+                            <div class="item-img">
+                                <img src="${img}" alt="${p.name}">
+                            </div>
+                            <div class="item-info">
+                                <div class="name">${p.name}</div>
+                                <div class="price">₦${parseFloat(p.price).toLocaleString()}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+            }
+
+            container.innerHTML = html;
+            container.style.display = 'block';
+        }
+
+        // Close search results on click away
+        document.addEventListener('click', (e) => {
+            const deskSearch = document.getElementById('desktop-search-container');
+            if (deskSearch && !deskSearch.contains(e.target)) {
+                // Keep expanded if it has focus
+                if (!deskSearch.contains(document.activeElement)) {
+                    // deskSearch.classList.remove('expanded');
+                }
+            }
+            if (!e.target.closest('.live-search-input') && !e.target.closest('.live-search-container')) {
+                document.querySelectorAll('.live-search-container').forEach(c => c.style.display = 'none');
+            }
+        });
+    </script>
 </body>
-
 </html>

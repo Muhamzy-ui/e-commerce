@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required,  user_passes_test
 from .models import Product, ProductImage, Category, Review
 from .forms import ProductForm, ReviewForm
@@ -166,21 +167,37 @@ def add_product(request):
 
 
 def is_vendor(user):
-    # Option A: treat staff users as vendors
-    return user.is_authenticated and user.is_staff
-    # Option B: if you have a group 'vendors': return user.groups.filter(name='vendors').exists()
+    """
+    Check if the user is a vendor AND has been approved by a superadmin.
+    """
+    return user.is_authenticated and user.is_vendor and hasattr(user, 'vendor_profile') and user.vendor_profile.approved
+
+def vendor_check(user):
+    # This is for the test_func in user_passes_test
+    return is_vendor(user)
+
+def handle_no_vendor_permission(request):
+    if not request.user.is_authenticated:
+        return redirect('account:login')
+    if request.user.is_vendor:
+        messages.warning(request, "Your vendor account is pending approval. Our team will verify it shortly!")
+        return redirect('account:dashboard')
+    messages.error(request, "You need a vendor account to access this page.")
+    return redirect('account:register_vendor')
 
 # dashboard listing vendor's products
 @login_required
-@user_passes_test(is_vendor)
 def vendor_dashboard(request):
+    if not is_vendor(request.user):
+        return handle_no_vendor_permission(request)
     products = Product.objects.filter(owner=request.user).order_by('-created_at')
     return render(request, 'vendor/dashboard.html', {'products': products})
 
 # vendor add product
 @login_required
-@user_passes_test(is_vendor)
 def vendor_add_product(request):
+    if not is_vendor(request.user):
+        return handle_no_vendor_permission(request)
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         images = request.FILES.getlist('images')  # multiple gallery images
@@ -197,8 +214,9 @@ def vendor_add_product(request):
     return render(request, 'vendor/add_product.html', {'form': form, 'categories': categories})
 
 @login_required
-@user_passes_test(is_vendor)
 def vendor_analytics(request):
+    if not is_vendor(request.user):
+        return handle_no_vendor_permission(request)
     vendor = request.user
 
     # Vendor products

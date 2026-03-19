@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Verify Vendors{% endblock %}
+
+{% block content %}
+<div class="elite-admin-container py-5">
+    <div class="container" style="max-width: 1000px;">
+        <div class="discovery-header d-flex justify-content-between align-items-center mb-4 p-4 glass-card rounded-4">
+            <div>
+                <h3 class="fw-bold mb-0">Vendor <span>Applications</span></h3>
+                <p class="small text-muted mb-0">Review and approve new store requests</p>
+            </div>
+            <div class="icon-circle bg-primary-soft text-primary">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+        </div>
+        
+        <div class="glass-card p-0 overflow-hidden shadow-lg border-0">
+            {% if pending_vendors %}
+            <div class="table-responsive">
+                <table class="table mb-0 align-middle table-borderless">
+                    <thead class="bg-primary-soft">
+                        <tr>
+                            <th class="ps-4 py-3 small fw-bold">STORE NAME</th>
+                            <th class="py-3 small fw-bold">APPLICANT</th>
+                            <th class="py-3 small fw-bold">PHONE</th>
+                            <th class="py-3 small fw-bold text-end pe-4">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vendor in pending_vendors %}
+                        <tr class="border-bottom border-light">
+                            <td class="ps-4 py-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar-elite" style="width: 40px; height: 40px; font-size: 16px;">{{ vendor.store_name|first|upper }}</div>
+                                    <span class="fw-bold">{{ vendor.store_name }}</span>
+                                </div>
+                            </td>
+                            <td>{{ vendor.user.username }}</td>
+                            <td class="text-muted small">{{ vendor.phone_number }}</td>
+                            <td class="text-end pe-4">
+                                <a href="{% url 'account:approve_vendor' vendor.id %}" class="btn btn-primary rounded-pill btn-sm px-4 fw-bold shadow-sm">
+                                    <i class="fa-solid fa-check me-1"></i> APPROVE
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="empty-state-icon mb-4">
+                    <i class="fa-solid fa-circle-check text-success display-1 opacity-25"></i>
+                </div>
+                <h4 class="fw-bold">All caught up!</h4>
+                <p class="text-muted">There are no pending vendor applications at the moment.</p>
+                <a href="{% url 'home' %}" class="btn btn-outline-primary rounded-pill px-4 mt-2">Return Home</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

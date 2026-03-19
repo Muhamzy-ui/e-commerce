@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password, ValidationError as PasswordValidationError
@@ -159,3 +159,27 @@ def register_vendor(request):
     else:
         form = VendorRegistrationForm()
     return render(request, 'account/register_vendor.html', {'form': form})
+
+# -------------------- VENDOR VERIFICATION (STAFF ONLY) --------------------
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def verify_vendors(request):
+    pending_vendors = VendorProfile.objects.filter(approved=False)
+    return render(request, "account/verify_vendors.html", {"pending_vendors": pending_vendors})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def approve_vendor(request, vendor_id):
+    vendor_profile = get_object_or_404(VendorProfile, id=vendor_id)
+    
+    # 1. Update Profile
+    vendor_profile.approved = True
+    vendor_profile.save()
+    
+    # 2. Update User
+    user = vendor_profile.user
+    user.is_vendor = True
+    user.save() # Save the whole user object to be safe
+    
+    messages.success(request, f"Vendor {vendor_profile.store_name} has been approved successfully!")
+    return redirect('account:verify_vendors')

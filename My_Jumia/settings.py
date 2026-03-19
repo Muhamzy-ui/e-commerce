@@ -1,7 +1,9 @@
 from pathlib import Path
 import os
-from decouple import Config, RepositoryEnv
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --------------------------------------------------
 # BASE DIR
@@ -9,17 +11,21 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --------------------------------------------------
-# FORCE .env LOADING (for local development)
-# --------------------------------------------------
-config = Config(RepositoryEnv(BASE_DIR / ".env"))
-
-# --------------------------------------------------
 # SECURITY
 # --------------------------------------------------
-SECRET_KEY = config("SECRET_KEY", default="django-insecure-default-key")
-DEBUG = config("DEBUG", cast=bool, default=True)
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "e-commerce-2-ru9d.onrender.com"]
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    ".onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+]
 
 # --------------------------------------------------
 # APPLICATIONS
@@ -34,14 +40,14 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
 
     # Local apps
-    "account.apps.AccountConfig",
-    "core.apps.CoreConfig",
-    "orders.apps.OrdersConfig",
-    "cart.apps.CartConfig",
-    "wishlist.apps.WishlistConfig",
-    "product.apps.ProductConfig",
-    "inbox.apps.InboxConfig",
-    "reviews.apps.ReviewsConfig",
+    "account",
+    "core",
+    "orders",
+    "cart",
+    "wishlist",
+    "product",
+    "inbox",
+    "reviews",
 ]
 
 # --------------------------------------------------
@@ -49,6 +55,7 @@ INSTALLED_APPS = [
 # --------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -57,8 +64,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# --------------------------------------------------
+# URLS & WSGI
+# --------------------------------------------------
 ROOT_URLCONF = "My_Jumia.urls"
+WSGI_APPLICATION = "My_Jumia.wsgi.application"
 
+# --------------------------------------------------
+# TEMPLATES
+# --------------------------------------------------
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -72,20 +86,17 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "product.context_processors.categories",
                 "account.context_processors.dashboard_counts",
+                "cart.context_processors.cart_count",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = "My_Jumia.wsgi.application"
-
-# --------------------------------------------------
-# DATABASE
-# --------------------------------------------------
-# Use DATABASE_URL if available (for Render), else fallback to local DB settings
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"postgres://{config('DB_USER','postgres')}:{config('DB_PASSWORD','password')}@{config('DB_HOST','localhost')}:{config('DB_PORT','5432')}/{config('DB_NAME','ecommerce_db')}"
+        default=os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
@@ -108,60 +119,39 @@ USE_I18N = True
 USE_TZ = True
 
 # --------------------------------------------------
-# STATIC & MEDIA FILES
+# STATIC & MEDIA
 # --------------------------------------------------
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # --------------------------------------------------
-# AUTHENTICATION
+# AUTH
 # --------------------------------------------------
 AUTH_USER_MODEL = "account.CustomUser"
+
 LOGIN_URL = "account:login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
 # --------------------------------------------------
-# EMAIL CONFIGURATION
+# EMAIL
 # --------------------------------------------------
-EMAIL_BACKEND_OPTION = config("EMAIL_BACKEND_OPTION", default="console").lower()
-
-if EMAIL_BACKEND_OPTION == "gmail":
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = "smtp.gmail.com"
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
-    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-elif EMAIL_BACKEND_OPTION == "sendgrid":
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = "smtp.sendgrid.net"
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
-    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-    DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="no-reply@example.com")
-else:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-    DEFAULT_FROM_EMAIL = "no-reply@example.com"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@myjumia.com"
 
 # --------------------------------------------------
 # PAYSTACK
 # --------------------------------------------------
-PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY", default="")
-PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY", default="")
+PAYSTACK_PUBLIC_KEY = os.getenv("PAYSTACK_PUBLIC_KEY", "")
+PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "")
 
 # --------------------------------------------------
-# TERMII SMS
-# --------------------------------------------------
-TERMII_API_KEY = config("TERMII_API_KEY", default="")
-
-# --------------------------------------------------
-# DEFAULT PRIMARY KEY
+# DEFAULT PK
 # --------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

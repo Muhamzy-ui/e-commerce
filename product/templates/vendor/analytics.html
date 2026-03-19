@@ -1,58 +1,134 @@
 {% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Vendor Analytics — MZCart Elite{% endblock %}
+
 {% block content %}
-
-<div class="container py-4">
-    <h2 class="fw-bold mb-4">Vendor Analytics 📊</h2>
-
-    <div class="row g-4">
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h6>Total Products</h6>
-                <h3>{{ total_products }}</h3>
+<div class="elite-analytics-container py-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="discovery-header d-flex justify-content-between align-items-center mb-5 p-4 glass-card rounded-4">
+            <div>
+                <h2 class="fw-bold mb-0">Store <span>Insights</span> 📈</h2>
+                <p class="small text-muted mb-0">Track your performance and growth</p>
+            </div>
+            <div class="icon-circle bg-primary-soft text-primary shadow-sm">
+                <i class="fa-solid fa-chart-line"></i>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h6>Total Orders</h6>
-                <h3>{{ total_orders }}</h3>
+        <!-- Stats Overview -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="glass-card p-4 text-center border-0 h-100">
+                    <div class="icon-circle bg-primary-soft text-primary mx-auto mb-3" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-box"></i>
+                    </div>
+                    <p class="text-muted small fw-bold mb-1">TOTAL PRODUCTS</p>
+                    <h2 class="fw-bold mb-0">{{ total_products }}</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-4 text-center border-0 h-100">
+                    <div class="icon-circle bg-success-soft text-success mx-auto mb-3" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-cart-check"></i>
+                    </div>
+                    <p class="text-muted small fw-bold mb-1">TOTAL ORDERS</p>
+                    <h2 class="fw-bold mb-0">{{ total_orders }}</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-4 text-center border-0 h-100">
+                    <div class="icon-circle bg-warning-soft text-warning mx-auto mb-3" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-naira-sign"></i>
+                    </div>
+                    <p class="text-muted small fw-bold mb-1">TOTAL REVENUE</p>
+                    <h2 class="fw-bold mb-0">₦{{ total_revenue|floatformat:0|intcomma }}</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-4 text-center border-0 h-100">
+                    <div class="icon-circle bg-info-soft text-info mx-auto mb-3" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-muted small fw-bold mb-1">AVG RATING</p>
+                    <h2 class="fw-bold mb-0">{{ avg_rating }} <span class="small" style="font-size: 0.5em;">⭐</span></h2>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h6>Total Revenue</h6>
-                <h3>₦{{ total_revenue }}</h3>
+        <div class="row g-4">
+            <!-- Top Products -->
+            <div class="col-lg-8">
+                <div class="glass-card p-4 h-100">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-crown text-warning"></i> Top Selling Products
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle elite-table">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>PRODUCT NAME</th>
+                                    <th class="text-center">UNITS SOLD</th>
+                                    <th class="text-end">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in top_products %}
+                                    <tr class="border-bottom border-light">
+                                        <td>
+                                            <div class="fw-bold">{{ p.product__name }}</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary-soft text-primary rounded-pill px-3">{{ p.total_sold }} sold</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="text-success small"><i class="fa-solid fa-circle-check me-1"></i> Active</span>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">No sales recordings yet.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Activity -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4 h-100 text-center d-flex flex-column justify-content-center">
+                    <h5 class="fw-bold mb-4">Weekly Velocity</h5>
+                    <div class="velocity-badge mx-auto mb-3">
+                        <h1 class="display-3 fw-bold text-primary mb-0">{{ weekly_orders }}</h1>
+                        <p class="text-muted small fw-bold">NEW ORDERS</p>
+                    </div>
+                    <p class="small text-muted">In the last 7 days</p>
+                    <div class="progress rounded-pill bg-primary-soft mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 65%"></div>
+                    </div>
+                    <p class="small text-success mb-0"><i class="fa-solid fa-arrow-trend-up me-1"></i> +12% from last week</p>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h6>Avg Rating</h6>
-                <h3>{{ avg_rating }} ⭐</h3>
-            </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'vendor:dashboard' %}" class="btn btn-outline-primary rounded-pill px-5">
+                <i class="fa-solid fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
         </div>
-
     </div>
-
-    <hr class="my-4">
-
-    <h4>Top Selling Products</h4>
-    <ul class="list-group">
-        {% for p in top_products %}
-            <li class="list-group-item d-flex justify-content-between">
-                {{ p.product__name }}
-                <span>{{ p.total_sold }} sold</span>
-            </li>
-        {% empty %}
-            <li class="list-group-item">No sales yet</li>
-        {% endfor %}
-    </ul>
-
-    <p class="mt-4">
-        Orders in last 7 days: <strong>{{ weekly_orders }}</strong>
-    </p>
 </div>
 
+<style>
+    .bg-success-soft { background: rgba(25, 135, 84, 0.1); }
+    .bg-warning-soft { background: rgba(255, 193, 7, 0.1); }
+    .bg-info-soft { background: rgba(13, 202, 240, 0.1); }
+    .icon-circle { border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .elite-table thead th { font-weight: 800; padding: 15px 10px; border: none; }
+    .elite-table tbody td { padding: 20px 10px; color: var(--text-color); }
+    .velocity-badge { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--primary-soft); display: flex; flex-column; align-items: center; justify-content: center; flex-direction: column; }
+</style>
 {% endblock %}

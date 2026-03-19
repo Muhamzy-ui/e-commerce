@@ -7,59 +7,135 @@
 <link rel="stylesheet" href="{% static 'css/payments.css' %}">
 <script src="{% static 'js/payments.js' %}"></script>
 
-<div class="payment-shell">
-  <div class="payment-top">
-    <h2>Checkout</h2>
-  </div>
-
-  <div class="checkout-grid">
-    <div class="checkout-form">
-      <form method="post" action="{% url 'orders:process_checkout' %}">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="mb-2">
-          {{ form.full_name.label_tag }}<br>
-          {{ form.full_name }}
-        </div>
-        <div class="mb-2">
-          {{ form.email.label_tag }}<br>
-          {{ form.email }}
-        </div>
-        <div class="mb-2">
-          {{ form.phone.label_tag }}<br>
-          {{ form.phone }}
-        </div>
-        <div class="mb-2">
-          {{ form.address.label_tag }}<br>
-          {{ form.address }}
-        </div>
-        <div class="mb-2">
-          {{ form.state.label_tag }}<br>
-          {{ form.state }}
+<div class="elite-checkout-container py-5">
+    <div class="container" style="max-width: 1200px;">
+        <!-- Header -->
+        <div class="discovery-header d-flex justify-content-between align-items-center mb-5 p-4 glass-card rounded-4">
+            <div>
+                <h2 class="fw-bold mb-0">Secure <span>Checkout</span></h2>
+                <p class="small text-muted mb-0">Complete your order with peace of mind</p>
+            </div>
+            <div class="icon-circle bg-success-soft text-success shadow-sm">
+                <i class="fa-solid fa-shield-check"></i>
+            </div>
         </div>
 
-        <h5>Payment method</h5>
-        <div class="mb-3">
-          {{ form.payment_method }}
-        </div>
+        <div class="row g-5">
+            <!-- Left: Form -->
+            <div class="col-lg-8">
+                <div class="glass-card p-4 p-md-5 border-0 shadow-lg">
+                    <form method="post" action="{% url 'orders:process_checkout' %}" class="elite-form">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        
+                        <div class="section-badge mb-4"><i class="fa-solid fa-location-dot me-2"></i> SHIPPING INFORMATION</div>
+                        
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">FULL NAME</label>
+                                <div class="input-group-elite">
+                                    <i class="fa-solid fa-user"></i>
+                                    <input type="text" name="full_name" class="form-control" placeholder="John Doe" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">EMAIL ADDRESS</label>
+                                <div class="input-group-elite">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <input type="email" name="email" class="form-control" placeholder="john@example.com" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">PHONE NUMBER</label>
+                                <div class="input-group-elite">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input type="tel" name="phone" class="form-control" placeholder="+234..." required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">SHIPPING ADDRESS</label>
+                                <div class="input-group-elite">
+                                    <i class="fa-solid fa-house-chimney"></i>
+                                    <textarea name="address" class="form-control" rows="3" placeholder="Apartment, street name, etc." required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">STATE</label>
+                                <div class="input-group-elite">
+                                    <i class="fa-solid fa-map"></i>
+                                    <input type="text" name="state" class="form-control" placeholder="Lagos" required>
+                                </div>
+                            </div>
+                        </div>
 
-        <button class="btn btn-primary">Place Order</button>
-      </form>
+                        <div class="section-badge mt-5 mb-4"><i class="fa-solid fa-credit-card me-2"></i> PAYMENT METHOD</div>
+                        
+                        <div class="payment-options d-flex flex-column gap-3 mb-5">
+                            <div class="glass-card p-3 border-primary-soft">
+                                {{ form.payment_method }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg">
+                            <i class="fa-solid fa-lock me-2"></i> PLACE ORDER NOW (₦{{ cart_total|floatformat:0|intcomma }})
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Summary -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4 border-0 shadow-sm sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold mb-4">Order Summary</h5>
+                    <div class="order-items-scroll mb-4" style="max-height: 400px; overflow-y: auto;">
+                        {% for item in cart %}
+                        <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom border-light">
+                            <div class="item-img-mini glass-card p-1" style="width: 50px; height: 50px;">
+                                {% if item.product.main_image %}
+                                    <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}" class="img-fluid rounded">
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="small fw-bold mb-0 text-truncate" style="max-width: 150px;">{{ item.product.name }}</h6>
+                                <small class="text-muted">{{ item.quantity }} x ₦{{ item.price|floatformat:0|intcomma }}</small>
+                            </div>
+                            <div class="text-end fw-bold small">
+                                ₦{{ item.total_price|floatformat:0|intcomma }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal</span>
+                        <span class="fw-bold">₦{{ cart_total|floatformat:0|intcomma }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-muted">Shipping</span>
+                        <span class="text-success fw-bold">FREE</span>
+                    </div>
+                    <hr class="op-1">
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5 class="fw-bold mb-0">Total Due</h5>
+                        <h4 class="fw-bold text-primary mb-0">₦{{ cart_total|floatformat:0|intcomma }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <aside class="checkout-summary">
-      <h5>Order Summary</h5>
-      <ul>
-        {% for item in cart %}
-          <li>
-            {{ item.product.name }} × {{ item.quantity }} — ₦{{ item.price|floatformat:0|intcomma }}
-          </li>
-        {% endfor %}
-      </ul>
-      <p><strong>Total: ₦{{ cart_total|floatformat:0|intcomma }}</strong></p>
-    </aside>
-  </div>
 </div>
+
+<style>
+    .input-group-elite { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; display: flex; align-items: center; padding: 0 15px; transition: 0.3s; }
+    .input-group-elite:focus-within { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--primary-soft); }
+    .input-group-elite i { color: var(--text-muted); font-size: 14px; margin-right: 12px; }
+    .input-group-elite .form-control { background: transparent; border: none; padding: 12px 0; color: var(--text-color); }
+    .input-group-elite .form-control:focus { box-shadow: none; }
+    .section-badge { background: var(--bg-color); color: var(--text-muted); font-size: 10px; font-weight: 800; padding: 8px 15px; border-radius: 6px; letter-spacing: 1px; display: inline-block; }
+    .bg-success-soft { background: rgba(25, 135, 84, 0.1); }
+    .icon-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .border-primary-soft { border: 1px solid var(--primary-soft); }
+</style>
 
 <script>
   // small script initialises theme toggle when payments.js loaded

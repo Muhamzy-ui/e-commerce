@@ -1,76 +1,175 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 {% load humanize %}
-{% block title %}Your Cart{% endblock %}
+{% block title %}Shopping Cart | MZCart Elite{% endblock %}
 
 {% block content %}
+<div class="elite-cart-container py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-4 d-flex align-items-center gap-2">
+            <i class="fa-solid fa-cart-shopping text-primary"></i> Shopping <span>Cart</span>
+        </h2>
 
-<div class="cart-page">
-
-    <h2 style="color: white; margin-bottom: 24px;">Cart ({{ cart_items|length }})</h2>
-
-    <div class="cart-container">
-
-        <!-- LEFT: CART ITEMS -->
-
-            {% for item in cart_items %}
-            <div class="cart-card">
-
-                <div class="cart-img-box">
-                    <a href="{% url 'products:detail' item.product.slug %}">
-                        {% if item.product.main_image %}
-                            <img src="{{ item.product.main_image.url }}" class="cart-img" alt="{{ item.product.name }}">
-                        {% else %}
-                            <img src="https://source.unsplash.com/150x150/?product" class="cart-img" alt="Product">
-                        {% endif %}
+        {% if cart_items %}
+        <div class="row g-4">
+            <!-- Cart Items List -->
+            <div class="col-lg-8">
+                <div class="glass-card p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table mb-0 align-middle">
+                            <thead class="bg-primary-soft">
+                                <tr>
+                                    <th class="ps-4 py-3 border-0 small fw-bold">PRODUCT</th>
+                                    <th class="py-3 border-0 small fw-bold text-center">QUANTITY</th>
+                                    <th class="py-3 border-0 small fw-bold text-end pe-4">SUBTOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr class="item-row">
+                                    <td class="ps-4 py-4 border-0">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="cart-img-box rounded-3 border">
+                                                {% if item.product.main_image %}
+                                                    <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}">
+                                                {% else %}
+                                                    <img src="{% static 'category/placeholder.png' %}" alt="Placeholder">
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold mb-1"><a href="{% url 'products:detail' item.product.slug %}" class="text-decoration-none text-dark">{{ item.product.name }}</a></h6>
+                                                <p class="small text-muted mb-2">Category: {{ item.product.category.name }}</p>
+                                                <div class="d-flex gap-2">
+                                                    <a href="{% url 'cart:remove_from_cart' item.product.id %}" class="text-danger small text-decoration-none fw-bold">
+                                                        <i class="fa-solid fa-trash-can me-1"></i> REMOVE
+                                                    </a>
+                                                    <a href="{% url 'wishlist:add' item.product.id %}" class="text-primary small text-decoration-none fw-bold ms-2">
+                                                        <i class="fa-solid fa-heart me-1"></i> SAVE FOR LATER
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 border-0 text-center">
+                                        <div class="quantity-control glass-card d-inline-flex align-items-center rounded-pill px-2">
+                                            <a href="{% url 'cart:adjust_cart' item.product.id 'decrease' %}" class="btn btn-sm elite-icon-btn"><i class="fa-solid fa-minus"></i></a>
+                                            <span class="px-3 fw-bold">{{ item.quantity }}</span>
+                                            <a href="{% url 'cart:adjust_cart' item.product.id 'increase' %}" class="btn btn-sm elite-icon-btn"><i class="fa-solid fa-plus"></i></a>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 border-0 text-end pe-4">
+                                        <h6 class="fw-bold mb-0">₦{{ item.total_price|floatformat:0|intcomma }}</h6>
+                                        <small class="text-muted extra-small">₦{{ item.product.price|floatformat:0|intcomma }} per unit</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-4 d-flex justify-content-between align-items-center">
+                    <a href="{% url 'home' %}" class="btn btn-link text-primary text-decoration-none fw-bold p-0">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Continue Shopping
                     </a>
                 </div>
+            </div>
 
-                <!-- PRODUCT INFO -->
-                <div class="cart-details">
-                    <h5 style="font-weight: 600; font-size: 16px; margin: 0 0 8px 0;">{{ item.product.name }}</h5>
-                    <p style="color: #e96a00; font-weight: 700; font-size: 16px; margin: 4px 0;">₦{{ item.price|floatformat:0|intcomma  }}</p>
+            <!-- Order Summary Sidebar -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4 sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Order Summary</h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal ({{ cart_items|length }} items)</span>
+                        <span class="fw-bold">₦{{ total_price|floatformat:0|intcomma }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                        <span class="text-muted">Delivery Fee</span>
+                        <span class="text-success fw-bold small">Calculated at checkout</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-4">
+                        <h5 class="fw-bold">Total</h5>
+                        <h4 class="fw-bold text-primary">₦{{ total_price|floatformat:0|intcomma }}</h4>
+                    </div>
 
-                    <a href="{% url 'cart:remove_from_cart' item.product.id %}" class="btn-remove">
-                        Remove
+                    <div class="promo-box bg-primary-soft p-3 rounded-4 mb-4 border border-primary border-opacity-10">
+                        <div class="d-flex gap-2">
+                            <input type="text" placeholder="Promo Code" class="form-control form-control-sm rounded-pill b-0 bg-white">
+                            <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold">APPLY</button>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'orders:checkout' %}" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-lg btn-glow">
+                        <i class="fa-solid fa-lock me-2"></i> PROCEED TO CHECKOUT
                     </a>
+
+                    <div class="mt-4 text-center">
+                        <p class="extra-small text-muted"><i class="fa-solid fa-shield-halved me-1"></i> Secure payment processed by <strong>Paystack</strong></p>
+                        <div class="d-flex justify-content-center gap-3 grayscale opacity-50 mt-2" style="font-size: 1.5rem;">
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                            <i class="fa-brands fa-cc-visa"></i>
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- QUANTITY BUTTONS -->
-                <div class="cart-qty">
-                    <a href="{% url 'cart:decrease_cart' item.product.id %}" class="qty-btn">−</a>
-                    <span class="qty-number">{{ item.quantity }}</span>
-                    <a href="{% url 'cart:add_to_cart' item.product.id %}" class="qty-btn">+</a>
-                </div>
-
             </div>
-            {% empty %}
-            <p style="text-align: center; padding: 40px; color: #999;">Your cart is empty.</p>
-            {% endfor %}
-
-        <!-- RIGHT: SUMMARY -->
-        <div class="cart-summary">
-            <h4>Cart Summary</h4>
-
-            <div class="summary-row">
-                <span>Subtotal</span>
-                <span>₦{{ total_price|floatformat:0|intcomma  }}</span>
-            </div>
-
-            {% if user.is_authenticated %}
-                <a href="{% url 'orders:checkout' %}" class="btn-checkout">
-                    Checkout (₦{{ total_price|floatformat:0|intcomma }})
-                </a>
-            {% else %}
-                <a href="{% url 'account:login' %}?next={% url 'orders:checkout' %}"
-                class="btn-checkout">
-                    Login to Checkout
-                </a>
-            {% endif %}
-
         </div>
+        {% else %}
+        <!-- Empty Cart State -->
+        <div class="text-center py-5 glass-card">
+            <div class="empty-cart-icon mb-4">
+                <i class="fa-solid fa-basket-shopping text-muted opacity-25" style="font-size: 8rem;"></i>
+            </div>
+            <h3 class="fw-bold mb-3">Your cart is empty!</h3>
+            <p class="text-muted mb-4">Explore our elite collection and start shopping today.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-lg">START SHOPPING</a>
+        </div>
+        {% endif %}
+
+        <!-- Recommendations -->
+        {% if recommended %}
+        <section class="mt-5 pt-5">
+            <h4 class="section-title mb-4">Recommended <span>For You</span></h4>
+            <div class="product-grid">
+                {% for rp in recommended %}
+                    <div class="product-card">
+                        <a href="{% url 'products:detail' rp.slug %}" class="product-img-wrapper">
+                            <img src="{{ rp.main_image.url }}" alt="{{ rp.name }}">
+                        </a>
+                        <div class="card-body">
+                            <h6 class="product-name">{{ rp.name }}</h6>
+                            <p class="product-price">₦{{ rp.price|floatformat:0|intcomma }}</p>
+                            <a href="{% url 'cart:add_to_cart' rp.id %}" class="btn-add-cart">
+                                <i class="fa fa-shopping-cart"></i> ADD TO CART
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
 
     </div>
-
 </div>
+
+<style>
+    .item-row { transition: var(--transition); }
+    .item-row:hover { background-color: rgba(255, 122, 0, 0.02); }
+    .cart-img-box { width: 90px; height: 90px; overflow: hidden; background: white; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .cart-img-box img { max-width: 90%; max-height: 90%; object-fit: contain; }
+    .quantity-control { border: 1px solid var(--border-color); }
+    .extra-small { font-size: 11px; }
+    .grayscale { filter: grayscale(1); }
+    .btn-glow:hover { box-shadow: 0 0 20px rgba(255, 122, 0, 0.4); }
+    .bg-primary-soft { background-color: rgba(255, 122, 0, 0.05); }
+    .empty-cart-icon i { display: inline-block; animation: float 3s ease-in-out infinite; }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+</style>
 
 {% endblock %}
