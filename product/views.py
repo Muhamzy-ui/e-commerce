@@ -72,7 +72,7 @@ def search_live(request):
             'name': p.name,
             'slug': p.slug,
             'price': str(p.price),
-            'image': img,
+            'main_image': img,
             'type': 'product',
         })
 
