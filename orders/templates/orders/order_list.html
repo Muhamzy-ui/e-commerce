@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="text-end">
-                    <p class="mb-1 fw-bold text-warning">â‚¦{{ order.total|floatformat:0|intcomma }}</p>
+                    <p class="mb-1 fw-bold text-warning">${{ order.total|floatformat:0|intcomma }}</p>
                     <span class="badge bg-secondary">
                         {{ order.payment_status|title }}
                     </span>

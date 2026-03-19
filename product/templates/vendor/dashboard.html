@@ -57,7 +57,7 @@
                                 <div class="card-body">
                                     <span class="category-tag mb-1">{{ p.category.name|upper }}</span>
                                     <h6 class="product-name">{{ p.name }}</h6>
-                                    <p class="product-price">â‚¦{{ p.price|floatformat:0|intcomma }}</p>
+                                    <p class="product-price">${{ p.price|floatformat:0|intcomma }}</p>
                                     
                                     <div class="product-card-actions mt-3">
                                         <a href="#" class="btn-view-elite flex-grow-1 text-center" title="Edit Product">
