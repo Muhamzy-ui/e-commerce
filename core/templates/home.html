@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load static %}
 {% load humanize %}
 {% load cart_extras %}
@@ -122,7 +122,7 @@
                                 <div class="card-body">
                                     <div class="category-small mb-1">{{ product.category.name|upper }}</div>
                                     <h6 class="product-name">{{ product.name }}</h6>
-                                    <p class="product-price">₦{{ product.price|floatformat:0|intcomma }}</p>
+                                    <p class="product-price">â‚¦{{ product.price|floatformat:0|intcomma }}</p>
                                     <div class="product-card-actions">
                                         <a href="{% url 'products:detail' product.slug %}" class="btn-view-elite" title="Quick View">
                                             <i class="fa-solid fa-eye"></i>
@@ -145,7 +145,7 @@
                 <!-- Flash Sales Section -->
                 <section class="mb-5 py-4 px-4 rounded-4 bg-primary-soft">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="section-title mb-0">Flash <span>Sales 🔥</span></h4>
+                        <h4 class="section-title mb-0">Flash <span>Sales ðŸ”¥</span></h4>
                         <div class="countdown-timer d-flex gap-2 align-items-center">
                             <span class="text-muted small fw-bold">Ending in:</span>
                             <div class="timer-unit glass-card px-2 py-1 small fw-bold flash-timer-display">00:00:00</div>
@@ -169,7 +169,7 @@
                                 </a>
                                 <div class="card-body">
                                     <h6 class="product-name">{{ product.name }}</h6>
-                                    <p class="product-price">₦{{ product.price|floatformat:0|intcomma }}</p>
+                                    <p class="product-price">â‚¦{{ product.price|floatformat:0|intcomma }}</p>
                                     <div class="product-card-actions">
                                         <a href="{% url 'products:detail' product.slug %}" class="btn-view-elite" title="Quick View">
                                             <i class="fa-solid fa-eye"></i>

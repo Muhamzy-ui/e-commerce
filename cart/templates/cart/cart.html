@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
 {% block title %}Shopping Cart | MZCart Elite{% endblock %}
@@ -58,8 +58,8 @@
                                         </div>
                                     </td>
                                     <td class="py-4 border-0 text-end pe-4">
-                                        <h6 class="fw-bold mb-0">₦{{ item.total_price|floatformat:0|intcomma }}</h6>
-                                        <small class="text-muted extra-small">₦{{ item.product.price|floatformat:0|intcomma }} per unit</small>
+                                        <h6 class="fw-bold mb-0">â‚¦{{ item.total_price|floatformat:0|intcomma }}</h6>
+                                        <small class="text-muted extra-small">â‚¦{{ item.product.price|floatformat:0|intcomma }} per unit</small>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -82,7 +82,7 @@
                     
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Subtotal ({{ cart_items|length }} items)</span>
-                        <span class="fw-bold">₦{{ total_price|floatformat:0|intcomma }}</span>
+                        <span class="fw-bold">â‚¦{{ total_price|floatformat:0|intcomma }}</span>
                     </div>
                     
                     <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
@@ -92,7 +92,7 @@
                     
                     <div class="d-flex justify-content-between mb-4">
                         <h5 class="fw-bold">Total</h5>
-                        <h4 class="fw-bold text-primary">₦{{ total_price|floatformat:0|intcomma }}</h4>
+                        <h4 class="fw-bold text-primary">â‚¦{{ total_price|floatformat:0|intcomma }}</h4>
                     </div>
 
                     <div class="promo-box bg-primary-soft p-3 rounded-4 mb-4 border border-primary border-opacity-10">
@@ -141,7 +141,7 @@
                         </a>
                         <div class="card-body">
                             <h6 class="product-name">{{ rp.name }}</h6>
-                            <p class="product-price">₦{{ rp.price|floatformat:0|intcomma }}</p>
+                            <p class="product-price">â‚¦{{ rp.price|floatformat:0|intcomma }}</p>
                             <a href="{% url 'cart:add_to_cart' rp.id %}" class="btn-add-cart">
                                 <i class="fa fa-shopping-cart"></i> ADD TO CART
                             </a>

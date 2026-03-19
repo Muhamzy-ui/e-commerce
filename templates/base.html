@@ -256,7 +256,7 @@
         </a>
         <a href="{% url 'products:product_list' %}" class="nav-item {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
             <i class="fa-solid fa-layer-group"></i>
-            <span>Browse</span>
+            <span>Products</span>
         </a>
         <a href="#" class="nav-item" onclick="document.getElementById('desktop-search-container').classList.toggle('expanded'); document.querySelector('.header-search-input').focus(); return false;">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -405,7 +405,7 @@
                             </div>
                             <div class="item-info">
                                 <div class="name">${p.name}</div>
-                                <div class="price">₦${parseFloat(p.price).toLocaleString()}</div>
+                                <div class="price">$${parseFloat(p.price).toLocaleString()}</div>
                             </div>
                         </a>
                     `;

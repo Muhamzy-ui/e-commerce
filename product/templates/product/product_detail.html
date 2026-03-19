@@ -84,8 +84,8 @@
 
                     <div class="elite-price-box p-4 rounded-4 glass-card mb-4">
                         <div class="price-row d-flex align-items-end gap-2">
-                            <span class="price-val">₦{{ product.price|floatformat:0|intcomma }}</span>
-                            <span class="text-muted text-decoration-line-through mb-1">₦{{ product.price|add:5000|intcomma }}</span>
+                            <span class="price-val">${{ product.price|floatformat:0|intcomma }}</span>
+                            <span class="text-muted text-decoration-line-through mb-1">${{ product.price|add:50|intcomma }}</span>
                             <span class="badge bg-danger ms-auto">-15%</span>
                         </div>
                         <p class="small text-success mt-2 mb-0"><i class="fa-solid fa-bolt me-1"></i> In stock, ready to ship</p>
@@ -110,7 +110,7 @@
                                 <div class="icon-circle bg-primary-soft text-primary"><i class="fa-solid fa-truck"></i></div>
                                 <div>
                                     <p class="mb-0 fw-bold small">Fast Delivery</p>
-                                    <p class="mb-0 text-muted extra-small">Free delivery on orders above ₦50,000</p>
+                                    <p class="mb-0 text-muted extra-small">Free delivery on orders above $100</p>
                                 </div>
                             </div>
                             <div class="d-flex gap-3 align-items-center">
@@ -208,28 +208,6 @@
             </div>
         </section>
 
-        <!-- ================= RELATED PRODUCTS ================= -->
-        {% if related_products %}
-        <section class="mt-5 pt-5">
-            <h4 class="section-title mb-4">You May <span>Also Like</span></h4>
-            <div class="product-grid">
-                {% for rp in related_products %}
-                    <div class="product-card">
-                        <a href="{% url 'products:detail' rp.slug %}" class="product-img-wrapper">
-                            <img src="{{ rp.main_image.url }}" alt="{{ rp.name }}">
-                        </a>
-                        <div class="card-body">
-                            <h6 class="product-name">{{ rp.name }}</h6>
-                            <p class="product-price">₦{{ rp.price|floatformat:0|intcomma }}</p>
-                            <a href="{% url 'cart:add_to_cart' rp.id %}" class="btn-add-cart">
-                                <i class="fa fa-shopping-cart"></i> ADD TO CART
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
         <!-- ================= DISCOVERY SECTIONS ================= -->
         <section class="mt-5 pt-5">
@@ -247,7 +225,7 @@
                                 </a>
                                 <div class="card-body">
                                     <h6 class="product-name" style="-webkit-line-clamp: 1; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">{{ p.name }}</h6>
-                                    <p class="product-price">₦{{ p.price|floatformat:0|intcomma }}</p>
+                                    <p class="product-price">${{ p.price|floatformat:0|intcomma }}</p>
                                     <a href="{% url 'cart:add_to_cart' p.id %}" class="btn-add-cart p-1"><i class="fa-solid fa-cart-plus"></i></a>
                                 </div>
                             </div>
@@ -268,7 +246,7 @@
                                 </a>
                                 <div class="card-body p-2">
                                     <h6 class="product-name small mb-1" style="height: 1.4em; -webkit-line-clamp: 1; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">{{ p.name }}</h6>
-                                    <p class="product-price small mb-0">₦{{ p.price|floatformat:0|intcomma }}</p>
+                                    <p class="product-price small mb-0">${{ p.price|floatformat:0|intcomma }}</p>
                                 </div>
                             </div>
                         {% endfor %}

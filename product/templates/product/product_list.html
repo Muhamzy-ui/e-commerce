@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load static %}
 {% load humanize %}
 {% load cart_extras %}
@@ -90,7 +90,7 @@
                             <div class="card-body">
                                 <span class="category-tag mb-1">{{ product.category.name|upper }}</span>
                                 <h6 class="product-name">{{ product.name }}</h6>
-                                <p class="product-price">₦{{ product.price|floatformat:0|intcomma }}</p>
+                                <p class="product-price">â‚¦{{ product.price|floatformat:0|intcomma }}</p>
                                 <div class="product-card-actions">
                                     <a href="{% url 'products:detail' product.slug %}" class="btn-view-elite" title="Quick View">
                                         <i class="fa-solid fa-eye"></i>

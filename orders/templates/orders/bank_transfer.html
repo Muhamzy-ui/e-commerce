@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load humanize %}
 {% block content %}
 
@@ -7,7 +7,7 @@
         <h3 class="fw-bold">Bank Transfer</h3>
         <hr>
 
-        <p><strong>Amount:</strong> ₦{{ amount|floatformat:0|intcomma }}</p>
+        <p><strong>Amount:</strong> â‚¦{{ amount|floatformat:0|intcomma }}</p>
         <p><strong>Account Name:</strong> {{ account_name }}</p>
         <p><strong>Account Number:</strong> {{ account_number }}</p>
         <p><strong>Bank:</strong> {{ bank_name }}</p>
