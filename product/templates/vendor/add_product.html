@@ -46,10 +46,17 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold">PRICE (₦)</label>
+                        <label class="form-label small fw-bold">PRICE ($)</label>
                         <div class="input-group-elite">
-                            <i class="fa-solid fa-naira-sign"></i>
-                            <input type="number" name="price" class="form-control" placeholder="50000" step="0.01" required id="id_price">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                            <input type="number" name="price" class="form-control" placeholder="50.00" step="0.01" required id="id_price">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" name="is_flash_sale" id="id_is_flash_sale">
+                            <label class="form-check-label fw-bold small ms-2" for="id_is_flash_sale">⚡ ADD TO FLASH SALE</label>
                         </div>
                     </div>
                     

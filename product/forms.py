@@ -5,7 +5,7 @@ from .models import Review
 class ProductForm(forms.ModelForm):
     class Meta: 
         model = Product
-        fields =  ['category', 'name', 'price', 'description', 'main_image']
+        fields = ['category', 'name', 'price', 'description', 'main_image', 'is_flash_sale']
         widgets = {
             'description': forms.Textarea(attrs={'rows':4}),
         }

@@ -40,6 +40,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     main_image = models.ImageField(upload_to="products/main/", blank=True, null=True)
+    is_flash_sale = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -54,6 +55,12 @@ class Product(models.Model):
             self.slug = new_slug
 
         super().save(*args, **kwargs)
+
+    @property
+    def is_new(self):
+        from django.utils.timezone import now
+        from datetime import timedelta
+        return self.created_at >= now() - timedelta(hours=24)
 
     def __str__(self):
         return self.name

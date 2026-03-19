@@ -2,14 +2,37 @@
 {% block title %}Register as Vendor{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h2>Become a Vendor</h2>
-    <p>Fill in your store details to register as a vendor.</p>
+<div class="elite-auth-wrapper py-5">
+    <div class="container d-flex justify-content-center">
+        <div class="glass-card p-5 auth-card shadow-lg" style="max-width: 550px; width: 100%;">
+            <div class="text-center mb-4">
+                <div class="auth-icon-circle mb-3 mx-auto">
+                    <i class="fa-solid fa-store text-primary"></i>
+                </div>
+                <h3 class="fw-bold">Vendor <span>Onboarding</span></h3>
+                <p class="text-muted small">Launch your elite store on MZCart today</p>
+            </div>
 
-    <form method="post" class="mt-4">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Register as Vendor</button>
-    </form>
+            <form method="post" class="elite-auth-form">
+                {% csrf_token %}
+                <div class="vendor-form-fields mb-4">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-lg">REGISTER AS VENDOR</button>
+            </form>
+        </div>
+    </div>
 </div>
+
+<style>
+    .auth-card { background: var(--glass-bg); border: 1px solid var(--border-color); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important; }
+    .auth-icon-circle { width: 70px; height: 70px; background: var(--primary-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+    .vendor-form-fields p { margin-bottom: 20px; }
+    .vendor-form-fields label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+    .vendor-form-fields input, .vendor-form-fields textarea, .vendor-form-fields select { 
+        width: 100%; padding: 12px 20px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); 
+        border: 1px solid var(--border-color); color: var(--text-color); transition: 0.3s;
+    }
+    .vendor-form-fields input:focus { border-color: var(--primary-color); outline: none; background: rgba(255, 255, 255, 0.05); }
+</style>
 {% endblock %}

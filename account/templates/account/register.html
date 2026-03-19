@@ -73,11 +73,12 @@
 </div>
 
 <style>
+    .auth-card { background: var(--glass-bg); border: 1px solid var(--border-color); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important; }
     .auth-icon-circle { width: 70px; height: 70px; background: var(--primary-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
     .input-group-elite { position: relative; }
     .input-group-elite i:not(.toggle-password) { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); opacity: 0.6; }
-    .input-group-elite .glass-input { padding-left: 50px; height: 55px; border-radius: 15px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); }
-    .input-group-elite .glass-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.1); }
+    .input-group-elite .glass-input { padding-left: 50px; height: 55px; border-radius: 15px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); color: var(--text-color); }
+    .input-group-elite .glass-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.1); background: rgba(255, 255, 255, 0.05); }
     .toggle-password { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); transition: 0.3s; }
     .toggle-password:hover { color: var(--primary-color); }
     .password-strength { height: 4px; border-radius: 2px; background: var(--border-color); overflow: hidden; }

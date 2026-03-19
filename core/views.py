@@ -5,7 +5,7 @@ def home(request):
     categories = Category.objects.all()
 
     latest_products = Product.objects.order_by("-created_at")[:8]
-    sales_products = Product.objects.order_by("?")[:8]  # random
+    sales_products = Product.objects.filter(is_flash_sale=True)[:8]
     recommended = Product.objects.order_by("?")[:8]
 
     return render(request, "home.html", {

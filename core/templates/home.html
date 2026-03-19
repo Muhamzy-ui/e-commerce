@@ -70,11 +70,11 @@
                 <section class="mb-5">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="section-title mb-0">Discover <span>Categories</span></h4>
-                        <a href="{% url 'products:product_list' %}" class="btn btn-link text-primary fw-bold text-decoration-none p-0">View All</a>
+                        <button id="viewAllCats" class="btn btn-link text-primary fw-bold text-decoration-none p-0">View All</button>
                     </div>
-                    <div class="row g-3">
-                        {% for cat in categories|slice:":6" %}
-                            <div class="col-md-2 col-4">
+                    <div class="row g-3" id="categoryContainer">
+                        {% for cat in categories %}
+                            <div class="col-md-2 col-4 category-item {% if forloop.counter > 6 %}d-none{% endif %}">
                                 <a href="{% url 'products:category' cat.slug %}" class="text-decoration-none">
                                     <div class="elite-cat-card">
                                         <div class="icon-box">
@@ -111,7 +111,12 @@
                                         <img src="{% static 'category/phone.png' %}" alt="{{ product.name }}">
                                     {% endif %}
                                     <div class="card-badges">
-                                        <span class="badge bg-primary">NEW</span>
+                                        {% if product.is_new %}
+                                            <span class="badge bg-primary">NEW</span>
+                                        {% endif %}
+                                        {% if product.is_flash_sale %}
+                                            <span class="badge bg-danger">FLASH</span>
+                                        {% endif %}
                                     </div>
                                 </a>
                                 <div class="card-body">
@@ -156,7 +161,10 @@
                                         <img src="{% static 'category/placeholder.png' %}" alt="{{ product.name }}">
                                     {% endif %}
                                     <div class="card-badges">
-                                        <span class="badge bg-danger">SALE</span>
+                                        {% if product.is_new %}
+                                            <span class="badge bg-primary">NEW</span>
+                                        {% endif %}
+                                        <span class="badge bg-danger">FLASH SALE</span>
                                     </div>
                                 </a>
                                 <div class="card-body">
@@ -251,5 +259,21 @@
         .hero-content h1 br { display: none; } /* Remove break on mobile */
     }
 </style>
+
+<script>
+    document.getElementById('viewAllCats').addEventListener('click', function() {
+        const items = document.querySelectorAll('.category-item.d-none');
+        if (items.length > 0) {
+            items.forEach(item => item.classList.remove('d-none'));
+            this.textContent = 'Show Less';
+        } else {
+            const allItems = document.querySelectorAll('.category-item');
+            allItems.forEach((item, index) => {
+                if (index >= 6) item.classList.add('d-none');
+            });
+            this.textContent = 'View All';
+        }
+    });
+</script>
 
 {% endblock %}
